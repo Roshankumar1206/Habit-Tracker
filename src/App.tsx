@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { HabitForm } from "./components/HabitForm"
 import { HabitList } from "./HabitList"
 import { Header } from "./Header"
-<Header></Header>
 import { HabitProvider } from "./context/HabitProvider"
 import { addWeeks, eachDayOfInterval, endOfWeek, startOfWeek } from "date-fns"
 
