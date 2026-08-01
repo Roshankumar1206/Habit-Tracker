@@ -1,0 +1,449 @@
+{
+  "assessment": "assessment1",
+  "title": "Habit Tracker — Understanding Check",
+  "subtitle": "40 questions on the React + TypeScript habit tracker you built. Every question comes from your own code.",
+  "sections": [
+    {
+      "id": "setup",
+      "title": "1. Project Setup & Tooling",
+      "questions": [
+        {
+          "id": "q01",
+          "prompt": "Looking at the scripts in package.json, which command starts the local development server with hot reload?",
+          "options": [
+            "npm run build",
+            "npm run preview",
+            "npm run dev",
+            "npm run lint"
+          ]
+        },
+        {
+          "id": "q02",
+          "prompt": "The build script is \"tsc -b && vite build\". What does the tsc -b part do before Vite runs?",
+          "options": [
+            "Type-checks the TypeScript project and fails the build if there are type errors",
+            "Installs any missing npm packages",
+            "Minifies the CSS output",
+            "Runs the ESLint rules"
+          ]
+        },
+        {
+          "id": "q03",
+          "prompt": "index.html contains <div id=\"root\"></div>. Which line in main.tsx is what actually attaches React to that element?",
+          "code": "import { StrictMode } from 'react'\nimport { createRoot } from 'react-dom/client'\nimport App from './App.tsx'\nimport './index.css'\n\ncreateRoot(document.getElementById('root')!).render(\n  <StrictMode>\n    <App />\n  </StrictMode>,\n)",
+          "options": [
+            "import './index.css'",
+            "<StrictMode>",
+            "import App from './App.tsx'",
+            "createRoot(document.getElementById('root')!).render(...)"
+          ]
+        },
+        {
+          "id": "q04",
+          "prompt": "Why is <App /> wrapped in <StrictMode> in main.tsx?",
+          "options": [
+            "It makes the production bundle smaller",
+            "It is required for TypeScript to compile .tsx files",
+            "It stops users from opening the browser devtools",
+            "In development it runs extra checks and deliberately double-invokes certain functions to surface bugs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "components",
+      "title": "2. Components, JSX & Rendering Lists",
+      "questions": [
+        {
+          "id": "q05",
+          "prompt": "In HabitList.tsx you render habits.map(habit => <HabitItem key={habit.id} ... />). Why does React need the key prop?",
+          "options": [
+            "It sets the id attribute on the rendered HTML element",
+            "It tells React what order to sort the list in",
+            "It lets React match each item across renders so it can update and reorder the list correctly",
+            "It is required by TypeScript whenever you map over an array"
+          ]
+        },
+        {
+          "id": "q06",
+          "prompt": "What is the main problem with using key={index} instead of key={habit.id} in that same list?",
+          "options": [
+            "Nothing — index keys are always fine",
+            "When a habit is deleted from the middle, all the indices shift and React can end up associating DOM or state with the wrong habit",
+            "React throws a runtime error",
+            "The list would render in reverse order"
+          ]
+        },
+        {
+          "id": "q07",
+          "prompt": "In HabitItem you have {streak !== 0 && <span className=\"text-sm text-amber-400\">🔥 {streak}</span>}. What appears on screen when streak is 0?",
+          "options": [
+            "Nothing is rendered for that expression",
+            "The number 0 appears on screen",
+            "The word false appears on screen",
+            "React throws an error"
+          ]
+        },
+        {
+          "id": "q08",
+          "prompt": "Suppose that same line had been written as {streak && <span>🔥 {streak}</span>} — without the !== 0 check. What would show on screen when streak is 0?",
+          "options": [
+            "The number 0 would be rendered on screen",
+            "undefined would render",
+            "Nothing would render",
+            "React would throw an error"
+          ]
+        },
+        {
+          "id": "q09",
+          "prompt": "In App.tsx, <HabitProvider> wraps <Header />, <HabitForm /> and <HabitList />. What is it inside HabitProvider that makes those three components actually appear on the page?",
+          "options": [
+            "HabitProvider renders its children prop",
+            "The useEffect inside App.tsx",
+            "React automatically renders anything nested inside any component",
+            "The key prop"
+          ]
+        },
+        {
+          "id": "q10",
+          "prompt": "Button.tsx renders <button {...props} className={...} /> and never mentions children anywhere. So how does the text \"Add Habit\" still end up inside the button?",
+          "code": "export function Button({ variant = \"primary\", className, ...props }: ButtonProps) {\n  return (\n    <button\n      {...props}\n      className={twMerge(\"...\", getVariantStyles(variant), className)}\n    />\n  )\n}\n\n// used as:  <Button disabled={...}>Add Habit</Button>",
+          "options": [
+            "React automatically forwards any text it finds",
+            "children is just another prop, so it gets passed through by the {...props} spread",
+            "The Button component reads the text back out of the DOM",
+            "twMerge injects the text into the button"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "title": "3. State, Events & Immutability",
+      "questions": [
+        {
+          "id": "q11",
+          "prompt": "In const [weekOffset, setWeekOffset] = useState(0), what is the [weekOffset, setWeekOffset] syntax doing?",
+          "options": [
+            "Object destructuring",
+            "Array destructuring of the pair that useState returns",
+            "Using the spread operator",
+            "Declaring a TypeScript tuple type"
+          ]
+        },
+        {
+          "id": "q12",
+          "prompt": "The Next button uses setWeekOffset(o => o + 1) rather than setWeekOffset(weekOffset + 1). Why prefer the function form?",
+          "options": [
+            "It is required whenever the piece of state is a number",
+            "It is purely a style preference with no behavioural difference",
+            "It avoids triggering a re-render",
+            "It updates based on the latest queued state value, which stays correct even when React batches updates"
+          ]
+        },
+        {
+          "id": "q13",
+          "prompt": "App.tsx recalculates visibleDates on every render from weekOffset, instead of storing it in its own useState. What is this approach called?",
+          "code": "const [weekOffset, setWeekOffset] = useState(0)\n\nconst week = addWeeks(new Date(), weekOffset)\nconst visibleDates = eachDayOfInterval({\n  start: startOfWeek(week, { weekStartsOn: 1 }),\n  end: endOfWeek(week, { weekStartsOn: 1 }),\n})",
+          "options": [
+            "Derived state — computing a value from existing state instead of duplicating it in another useState",
+            "Prop drilling",
+            "A side effect",
+            "Memoization"
+          ]
+        },
+        {
+          "id": "q14",
+          "prompt": "The input in HabitForm.tsx has both value={name} and onChange={e => setName(e.target.value)}. This makes it:",
+          "options": [
+            "A controlled input, where React state is the single source of truth",
+            "An uncontrolled input",
+            "A ref-based input",
+            "A native HTML form action"
+          ]
+        },
+        {
+          "id": "q15",
+          "prompt": "If you deleted value={name} from that input but kept the onChange handler, what would happen when setName(\"\") runs after submitting?",
+          "options": [
+            "The input would clear exactly as it does now",
+            "React would throw a warning and crash",
+            "The typed text would stay in the box, because the DOM is now holding the value instead of React",
+            "The form would submit a second time"
+          ]
+        },
+        {
+          "id": "q16",
+          "prompt": "What does e.preventDefault() do at the top of handleSubmit?",
+          "options": [
+            "It stops the click from bubbling up to parent elements",
+            "It prevents the browser's default form submission, which would reload the whole page",
+            "It stops the habit from being added twice",
+            "It prevents the input from being cleared"
+          ]
+        },
+        {
+          "id": "q17",
+          "prompt": "deleteHabit is written as setHabits(curr => curr.filter(h => h.id !== id)). Why use filter instead of finding the index and calling curr.splice(i, 1)?",
+          "options": [
+            "filter runs faster than splice",
+            "splice does not exist on arrays",
+            "filter returns a brand-new array, whereas splice mutates the existing state array in place and React can miss the change",
+            "filter also sorts the array for you"
+          ]
+        },
+        {
+          "id": "q18",
+          "prompt": "In toggleHabit you return { ...h, completions } rather than doing h.completions = completions and returning h. Why does that matter?",
+          "code": "function toggleHabit(id: string, date: Date) {\n  setHabits(curr =>\n    curr.map(h => {\n      if (h.id !== id) return h\n\n      const alreadyDone = h.completions.some(c => isSameDay(c, date))\n      const completions = alreadyDone\n        ? h.completions.filter(c => !isSameDay(c, date))\n        : [...h.completions, date]\n\n      return { ...h, completions }\n    }),\n  )\n}",
+          "options": [
+            "Spread syntax is shorter to type",
+            "It produces a new habit object instead of mutating state, which is how React detects that something changed",
+            "It removes the old habit from the array",
+            "It converts the habit into JSON"
+          ]
+        },
+        {
+          "id": "q19",
+          "prompt": "addHabit uses crypto.randomUUID() for the habit id. Why would using habits.length as the id be a bug?",
+          "options": [
+            "length is a string, not a number",
+            "It would be noticeably slower to compute",
+            "React does not allow ids that are numbers",
+            "After a habit is deleted, lengths repeat — so two different habits could end up with the same id"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "effects",
+      "title": "4. Effects & Custom Hooks",
+      "questions": [
+        {
+          "id": "q20",
+          "prompt": "In the useEffect in App.tsx, what is the returned function for?",
+          "code": "useEffect(() => {\n  function handler() {\n    console.log(weekOffset)\n  }\n  document.addEventListener(\"click\", handler)\n\n  return () => {\n    document.removeEventListener(\"click\", handler)\n  }\n}, [weekOffset])",
+          "options": [
+            "It is the cleanup function — React runs it before the effect runs again and when the component unmounts, so listeners don't pile up",
+            "It runs once before the very first render",
+            "It cancels the click event",
+            "It is the value the effect hands back to the parent component"
+          ]
+        },
+        {
+          "id": "q21",
+          "prompt": "That effect's dependency array is [weekOffset]. What happens each time weekOffset changes?",
+          "options": [
+            "Nothing — an effect only ever runs once",
+            "The component unmounts and remounts",
+            "The cleanup runs first to remove the old listener, then the effect body runs again and adds a fresh one",
+            "The effect body runs again but the cleanup never does"
+          ]
+        },
+        {
+          "id": "q22",
+          "prompt": "If that dependency array were [] instead of [weekOffset], what would console.log(weekOffset) print after you clicked Next several times and then clicked the page?",
+          "options": [
+            "The current weekOffset each time",
+            "undefined",
+            "It would throw an error",
+            "Always 0, because the handler captured the value from the first render and was never replaced"
+          ]
+        },
+        {
+          "id": "q23",
+          "prompt": "If the dependency array were removed entirely — useEffect(() => { ... }) with no second argument — how often would the effect run?",
+          "options": [
+            "Only once, after the first render",
+            "After every single render",
+            "Never",
+            "Only when the component unmounts"
+          ]
+        },
+        {
+          "id": "q24",
+          "prompt": "useLocalStorage calls useState<T>(() => { ... }) — passing a function rather than a plain value. What does that achieve?",
+          "code": "const [storedValue, setStoredValue] = useState<T>(() => {\n  try {\n    const item = localStorage.getItem(key)\n    if (item == null) return initialValue\n\n    return JSON.parse(item, dateReviver)\n  } catch {\n    return initialValue\n  }\n})",
+          "options": [
+            "It is a lazy initializer — the localStorage read and JSON.parse run only on the first render instead of on every render",
+            "It makes the state update asynchronous",
+            "It is required syntax whenever useState is given a generic type",
+            "It prevents the state from ever changing"
+          ]
+        },
+        {
+          "id": "q25",
+          "prompt": "useLocalStorage ends with return [storedValue, setStoredValue] as const. What is as const doing there?",
+          "options": [
+            "Making the array read-only at runtime",
+            "Freezing the state value so it cannot be reassigned",
+            "Typing the return as a fixed tuple [T, setter] instead of a mixed array, so destructuring gives each variable the right type",
+            "Nothing — it could be removed with no effect"
+          ]
+        },
+        {
+          "id": "q26",
+          "prompt": "The useEffect inside useLocalStorage has [storedValue, key] as its dependencies. When does it write to localStorage?",
+          "options": [
+            "Only once, when the component mounts",
+            "After every render, unconditionally",
+            "Before the component renders",
+            "After any render in which storedValue or key changed"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "context",
+      "title": "5. The Context API",
+      "questions": [
+        {
+          "id": "q27",
+          "prompt": "Why does this app put habits in a Context instead of passing them down as props from App?",
+          "options": [
+            "Context is faster than passing props",
+            "It avoids prop drilling — Header and HabitList read the habits directly instead of App threading them through every level",
+            "Props cannot hold arrays or functions",
+            "Context saves the data to a server"
+          ]
+        },
+        {
+          "id": "q28",
+          "prompt": "In usehabit.ts the context is created as createContext<null | Context>(null). Why is null part of the type and used as the default value?",
+          "options": [
+            "Because a component rendered outside HabitProvider would receive that default, so the type has to admit that possibility",
+            "Because TypeScript requires every context to allow null",
+            "Because context values are always null and stay null",
+            "To make every field inside the context optional"
+          ]
+        },
+        {
+          "id": "q29",
+          "prompt": "useHabits() does if (habitContext == null) throw new Error(\"Null context\"). What does that guard buy you?",
+          "code": "export function useHabits() {\n  const habitContext = useContext(HabitContext)\n  if (habitContext == null) throw new Error(\"Null context\")\n\n  return habitContext\n}",
+          "options": [
+            "It replaces the null with an empty context object",
+            "It gives a clear error if the hook is used outside HabitProvider, and it narrows the type so every caller can use the value without null-checking",
+            "It creates a new context on the fly",
+            "It only logs a warning to the console"
+          ]
+        },
+        {
+          "id": "q30",
+          "prompt": "Every render of HabitProvider builds a brand-new object { habits, addHabit, toggleHabit, deleteHabit } as the context value. What is the consequence of that?",
+          "options": [
+            "The context is torn down and rebuilt from scratch",
+            "The provider unmounts its children",
+            "localStorage gets cleared",
+            "Every component that calls useHabits re-renders"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "typescript",
+      "title": "6. TypeScript & the Button Component",
+      "questions": [
+        {
+          "id": "q31",
+          "prompt": "What does type ButtonProps = { variant?: Variant } & ComponentProps<\"button\"> accomplish?",
+          "options": [
+            "It replaces all the native button props with just variant",
+            "It adds an optional variant prop on top of every standard <button> prop, such as onClick, disabled and children",
+            "It makes variant a required prop",
+            "It converts the component into a plain div"
+          ]
+        },
+        {
+          "id": "q32",
+          "prompt": "Given function Button({ variant = \"primary\", className, ...props }: ButtonProps), what does props contain inside the function body?",
+          "options": [
+            "Every prop, including variant and className",
+            "Only onClick",
+            "All the remaining props except variant and className, which were pulled out by the destructuring",
+            "An empty object"
+          ]
+        },
+        {
+          "id": "q33",
+          "prompt": "In Header.tsx you have format(visibleDates.at(-1)!, \"MMM d\"). What does .at(-1) return, and what does the ! mean?",
+          "options": [
+            "The first element; ! is the logical NOT operator",
+            "The array's length; ! is required syntax after .at()",
+            "A shallow copy of the array; ! reverses it",
+            "The last element; ! is a non-null assertion telling TypeScript the value is not undefined"
+          ]
+        },
+        {
+          "id": "q34",
+          "prompt": "What job does twMerge from tailwind-merge do in Button.tsx?",
+          "code": "className={twMerge(\n  \"transition-colors rounded px-2 py-1 disabled:opacity-30 disabled:cursor-not-allowed\",\n  getVariantStyles(variant),\n  className,\n)}",
+          "options": [
+            "It merges Tailwind class strings and resolves conflicts, so a className passed into Button wins over the defaults",
+            "It compiles Tailwind CSS at build time",
+            "It minifies the class names for production",
+            "It converts Tailwind utilities into plain CSS rules"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logic",
+      "title": "7. App Logic & date-fns",
+      "questions": [
+        {
+          "id": "q35",
+          "prompt": "In startOfWeek(week, { weekStartsOn: 1 }), what does weekStartsOn: 1 mean?",
+          "options": [
+            "The week starts on Sunday",
+            "It shifts the week forward by one",
+            "It selects the first week of the year",
+            "The week starts on Monday"
+          ]
+        },
+        {
+          "id": "q36",
+          "prompt": "In Header.tsx the Next button has disabled={visibleDates.some(d => isToday(d))}. What is the practical effect?",
+          "options": [
+            "Next is disabled at weekends",
+            "Next is disabled while there are no habits yet",
+            "Next is disabled whenever the week on screen contains today, so you cannot browse into future weeks",
+            "Next is permanently disabled"
+          ]
+        },
+        {
+          "id": "q37",
+          "prompt": "Trace getStreak. Today is Wednesday, and a habit's completions contains Wednesday and Tuesday but NOT Monday. What does it return?",
+          "code": "function getStreak(completions: Date[]) {\n  let streak = 0\n  let date = new Date()\n\n  while (completions.some(c => isSameDay(c, date))) {\n    streak++\n    date = subDays(date, 1)\n  }\n\n  return streak\n}",
+          "options": ["0", "1", "2", "3"]
+        },
+        {
+          "id": "q38",
+          "prompt": "Same getStreak function. Today is Wednesday. This time completions contains Tuesday and Monday, but today has NOT been completed yet. What does it return?",
+          "options": ["2", "1", "0", "3"]
+        },
+        {
+          "id": "q39",
+          "prompt": "useLocalStorage passes a dateReviver to JSON.parse. What problem is that solving?",
+          "code": "function dateReviver(_key: string, value: unknown) {\n  if (typeof value === \"string\" && /^\\d{4}-\\d{2}-\\d{2}T/.test(value)) {\n    return parseISO(value)\n  }\n\n  return value\n}",
+          "options": [
+            "It compresses the stored JSON",
+            "JSON has no Date type, so saved dates come back as plain strings — the reviver turns matching ISO strings back into real Date objects",
+            "It encrypts whatever is written to localStorage",
+            "It sorts the completions by date"
+          ]
+        },
+        {
+          "id": "q40",
+          "prompt": "What would actually break if you deleted dateReviver and just called JSON.parse(item)?",
+          "options": [
+            "Nothing would change",
+            "localStorage would stop saving anything",
+            "All saved habits would be deleted on refresh",
+            "After a refresh, completions would hold strings instead of Dates, so the isSameDay comparisons — the day checkmarks and the streak — would stop working"
+          ]
+        }
+      ]
+    }
+  ]
+}

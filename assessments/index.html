@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>Habit Tracker — Understanding Check</title>
+    <style>
+      :root {
+        --bg: #18181b;
+        --panel: #27272a;
+        --panel-2: #3f3f46;
+        --text: #fafafa;
+        --muted: #a1a1aa;
+        --dim: #71717a;
+        --accent: #8b5cf6;
+        --accent-dim: #6d28d9;
+        --ok: #22c55e;
+        --warn: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      code, pre {
+        font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
+        /* show => as two characters, exactly as it appears in the editor */
+        font-variant-ligatures: none;
+      }
+
+      .wrap {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 0 1rem 6rem;
+      }
+
+      /* ---------- sticky progress bar ---------- */
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(24, 24, 27, 0.92);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--panel-2);
+      }
+
+      .topbar-inner {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .topbar-title {
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .counter {
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      .bar {
+        height: 3px;
+        background: var(--panel-2);
+      }
+
+      .bar-fill {
+        height: 100%;
+        width: 0%;
+        background: var(--accent);
+        transition: width 0.2s ease;
+      }
+
+      /* ---------- header ---------- */
+      header.intro {
+        padding: 2.5rem 0 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.9rem;
+        margin: 0 0 0.5rem;
+        letter-spacing: -0.02em;
+      }
+
+      .sub {
+        color: var(--muted);
+        margin: 0 0 1.5rem;
+      }
+
+      .notice {
+        background: var(--panel);
+        border: 1px solid var(--panel-2);
+        border-left: 3px solid var(--accent);
+        border-radius: 0.5rem;
+        padding: 1rem 1.15rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .notice strong { color: var(--text); }
+
+      .notice ul {
+        margin: 0.6rem 0 0;
+        padding-left: 1.1rem;
+      }
+
+      .notice li { margin: 0.25rem 0; }
+
+      .field {
+        margin: 1.5rem 0 0;
+      }
+
+      .field label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .field input {
+        width: 100%;
+        max-width: 22rem;
+        background: var(--panel);
+        border: 1px solid var(--panel-2);
+        color: var(--text);
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.85rem;
+        font-size: 1rem;
+        outline: none;
+      }
+
+      .field input:focus-visible {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.35);
+      }
+
+      /* ---------- sections & questions ---------- */
+      section.qsection {
+        margin-top: 2.75rem;
+      }
+
+      h2 {
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--panel-2);
+      }
+
+      .q {
+        background: var(--panel);
+        border: 1px solid transparent;
+        border-radius: 0.75rem;
+        padding: 1.15rem 1.25rem;
+        margin-bottom: 1rem;
+        scroll-margin-top: 5rem;
+      }
+
+      .q.answered { border-color: rgba(139, 92, 246, 0.35); }
+      .q.missing { border-color: var(--danger); }
+
+      .q-head {
+        display: flex;
+        gap: 0.65rem;
+        align-items: baseline;
+        margin-bottom: 0.85rem;
+      }
+
+      .q-num {
+        color: var(--dim);
+        font-size: 0.8rem;
+        font-variant-numeric: tabular-nums;
+        flex-shrink: 0;
+        padding-top: 0.1rem;
+      }
+
+      .q-prompt {
+        font-size: 0.98rem;
+      }
+
+      pre.snippet {
+        background: #131316;
+        border: 1px solid var(--panel-2);
+        border-radius: 0.5rem;
+        padding: 0.85rem 1rem;
+        margin: 0 0 0.9rem;
+        overflow-x: auto;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: #d4d4d8;
+      }
+
+      .opts {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+
+      .opt {
+        display: flex;
+        gap: 0.7rem;
+        align-items: flex-start;
+        background: var(--bg);
+        border: 1px solid var(--panel-2);
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.8rem;
+        cursor: pointer;
+        transition: background 0.12s, border-color 0.12s;
+        font-size: 0.93rem;
+      }
+
+      .opt:hover { background: #202024; }
+
+      .opt.selected {
+        border-color: var(--accent);
+        background: rgba(139, 92, 246, 0.12);
+      }
+
+      .opt input { display: none; }
+
+      .letter {
+        flex-shrink: 0;
+        width: 1.35rem;
+        height: 1.35rem;
+        border-radius: 999px;
+        border: 1px solid var(--panel-2);
+        display: grid;
+        place-items: center;
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 0.1rem;
+      }
+
+      .opt.selected .letter {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      /* ---------- submit ---------- */
+      .submit-zone {
+        margin-top: 3rem;
+        text-align: center;
+      }
+
+      button.primary {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 0.6rem;
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      button.primary:hover:not(:disabled) { background: #7c4ded; }
+      button.primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+      button.ghost {
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid var(--panel-2);
+        border-radius: 0.6rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 0.95rem;
+        cursor: pointer;
+      }
+
+      button.ghost:hover { color: var(--text); border-color: var(--dim); }
+
+      .submit-hint {
+        color: var(--dim);
+        font-size: 0.85rem;
+        margin-top: 0.85rem;
+      }
+
+      /* ---------- modal ---------- */
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        place-items: center;
+        z-index: 50;
+        padding: 1rem;
+      }
+
+      .overlay.open { display: grid; }
+
+      .modal {
+        background: var(--panel);
+        border: 1px solid var(--panel-2);
+        border-radius: 0.85rem;
+        padding: 1.5rem;
+        max-width: 27rem;
+        width: 100%;
+      }
+
+      .modal h3 { margin: 0 0 0.6rem; font-size: 1.1rem; }
+      .modal p { color: var(--muted); font-size: 0.92rem; margin: 0 0 1.15rem; }
+
+      .modal-actions {
+        display: flex;
+        gap: 0.65rem;
+        justify-content: flex-end;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin: 0 0 1.15rem;
+      }
+
+      .chip {
+        background: var(--bg);
+        border: 1px solid var(--danger);
+        color: #fca5a5;
+        border-radius: 0.35rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.78rem;
+        cursor: pointer;
+      }
+
+      /* ---------- done / error screens ---------- */
+      .center-screen {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1rem;
+        text-align: center;
+      }
+
+      .done-card {
+        max-width: 34rem;
+      }
+
+      .tick {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 999px;
+        background: rgba(34, 197, 94, 0.15);
+        color: var(--ok);
+        display: grid;
+        place-items: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.25rem;
+      }
+
+      .cmds {
+        background: #131316;
+        border: 1px solid var(--panel-2);
+        border-radius: 0.5rem;
+        padding: 0.9rem 1rem;
+        text-align: left;
+        font-size: 0.83rem;
+        color: #d4d4d8;
+        margin-top: 1.25rem;
+        overflow-x: auto;
+      }
+
+      .err { color: #fca5a5; }
+
+      .footnote {
+        margin-top: 2.5rem;
+        color: var(--dim);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="center-screen"><p style="color: var(--muted)">Loading…</p></div>
+    </div>
+
+    <div class="overlay" id="overlay">
+      <div class="modal">
+        <h3 id="modal-title"></h3>
+        <p id="modal-body"></p>
+        <div class="chip-row" id="modal-chips"></div>
+        <div class="modal-actions">
+          <button class="ghost" id="modal-cancel">Go back</button>
+          <button class="primary" id="modal-confirm">Submit anyway</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      "use strict"
+
+      /* ------------------------------------------------------------------
+         Integrity logging: focus loss + paste/copy attempts.
+         Everything collected here is written into assessment1/answers.json.
+      ------------------------------------------------------------------ */
+      const integrity = {
+        focusLog: [],
+        pasteAttempts: [],
+        copyAttempts: [],
+      }
+
+      let leftAt = null
+
+      function markLeft() {
+        if (leftAt != null) return
+        leftAt = Date.now()
+      }
+
+      function markReturned() {
+        if (leftAt == null) return
+        const away = Math.round((Date.now() - leftAt) / 1000)
+        integrity.focusLog.push({
+          leftAt: new Date(leftAt).toISOString(),
+          returnedAt: new Date().toISOString(),
+          awaySeconds: away,
+        })
+        leftAt = null
+        saveDraft()
+      }
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) markLeft()
+        else markReturned()
+      })
+      window.addEventListener("blur", markLeft)
+      window.addEventListener("focus", markReturned)
+
+      document.addEventListener(
+        "paste",
+        e => {
+          e.preventDefault()
+          integrity.pasteAttempts.push({ at: new Date().toISOString() })
+          saveDraft()
+          flash("Pasting is disabled during this assessment.")
+        },
+        true,
+      )
+
+      document.addEventListener("copy", () => {
+        integrity.copyAttempts.push({ at: new Date().toISOString() })
+        saveDraft()
+      })
+
+      let flashTimer = null
+      function flash(message) {
+        let el = document.getElementById("flash")
+        if (el == null) {
+          el = document.createElement("div")
+          el.id = "flash"
+          el.style.cssText =
+            "position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);" +
+            "background:#3f3f46;color:#fafafa;padding:0.6rem 1.1rem;border-radius:0.5rem;" +
+            "font-size:0.85rem;z-index:99;box-shadow:0 4px 20px rgba(0,0,0,.4)"
+          document.body.appendChild(el)
+        }
+        el.textContent = message
+        el.style.display = "block"
+        clearTimeout(flashTimer)
+        flashTimer = setTimeout(() => (el.style.display = "none"), 2200)
+      }
+
+      /* ------------------------------------------------------------------
+         State
+      ------------------------------------------------------------------ */
+      const DRAFT_KEY = "habit-assessment1-draft"
+      const LETTERS = ["A", "B", "C", "D", "E", "F"]
+
+      const state = {
+        data: null,
+        allQuestions: [],
+        answers: {},
+        studentName: "",
+        startedAt: new Date().toISOString(),
+        submitting: false,
+      }
+
+      function saveDraft() {
+        try {
+          localStorage.setItem(
+            DRAFT_KEY,
+            JSON.stringify({
+              answers: state.answers,
+              studentName: state.studentName,
+              startedAt: state.startedAt,
+              integrity,
+            }),
+          )
+        } catch {
+          /* ignore quota errors */
+        }
+      }
+
+      function loadDraft() {
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY)
+          if (raw == null) return
+          const draft = JSON.parse(raw)
+          state.answers = draft.answers ?? {}
+          state.studentName = draft.studentName ?? ""
+          state.startedAt = draft.startedAt ?? state.startedAt
+          if (draft.integrity != null) {
+            integrity.focusLog = draft.integrity.focusLog ?? []
+            integrity.pasteAttempts = draft.integrity.pasteAttempts ?? []
+            integrity.copyAttempts = draft.integrity.copyAttempts ?? []
+          }
+        } catch {
+          /* ignore corrupt drafts */
+        }
+      }
+
+      /* ------------------------------------------------------------------
+         Rendering
+      ------------------------------------------------------------------ */
+      const app = document.getElementById("app")
+
+      function el(tag, className, text) {
+        const node = document.createElement(tag)
+        if (className) node.className = className
+        if (text != null) node.textContent = text
+        return node
+      }
+
+      function renderError(title, lines) {
+        app.replaceChildren()
+        const screen = el("div", "center-screen")
+        const card = el("div", "done-card")
+        card.appendChild(el("h1", null, title))
+        for (const line of lines) {
+          const p = el("p", "sub err", line)
+          card.appendChild(p)
+        }
+        screen.appendChild(card)
+        app.appendChild(screen)
+      }
+
+      function renderTest() {
+        app.replaceChildren()
+
+        /* sticky progress bar */
+        const topbar = el("div", "topbar")
+        const inner = el("div", "topbar-inner")
+        inner.appendChild(el("span", "topbar-title", "Habit Tracker — Understanding Check"))
+        const counter = el("span", "counter")
+        counter.id = "counter"
+        inner.appendChild(counter)
+        topbar.appendChild(inner)
+        const bar = el("div", "bar")
+        const fill = el("div", "bar-fill")
+        fill.id = "bar-fill"
+        bar.appendChild(fill)
+        topbar.appendChild(bar)
+        app.appendChild(topbar)
+
+        const wrap = el("div", "wrap")
+
+        /* intro */
+        const intro = el("header", "intro")
+        intro.appendChild(el("h1", null, state.data.title))
+        intro.appendChild(el("p", "sub", state.data.subtitle))
+
+        const notice = el("div", "notice")
+        const noticeIntro = el("p")
+        noticeIntro.style.margin = "0"
+        noticeIntro.innerHTML =
+          "<strong>Before you start — read this.</strong>"
+        notice.appendChild(noticeIntro)
+        const ul = document.createElement("ul")
+        for (const item of [
+          "Closed book. No AI, no Google, no opening the project files. Answer from what you understand.",
+          "There is no timer — take the time you need, but answer honestly.",
+          "Pasting into this page is disabled, and the time you spend away from this tab is recorded.",
+          "Your progress is saved as you go, so a refresh will not lose your answers.",
+          "You get one submission. Once you submit, the answers file is written and locked.",
+        ]) {
+          ul.appendChild(el("li", null, item))
+        }
+        notice.appendChild(ul)
+        intro.appendChild(notice)
+
+        const field = el("div", "field")
+        const label = el("label", null, "Your full name")
+        label.setAttribute("for", "student-name")
+        const nameInput = document.createElement("input")
+        nameInput.id = "student-name"
+        nameInput.type = "text"
+        nameInput.placeholder = "e.g. Roshan"
+        nameInput.autocomplete = "off"
+        nameInput.value = state.studentName
+        nameInput.addEventListener("input", () => {
+          state.studentName = nameInput.value
+          saveDraft()
+          updateProgress()
+        })
+        field.appendChild(label)
+        field.appendChild(nameInput)
+        intro.appendChild(field)
+
+        wrap.appendChild(intro)
+
+        /* sections */
+        let n = 0
+        for (const section of state.data.sections) {
+          const sectionEl = el("section", "qsection")
+          sectionEl.appendChild(el("h2", null, section.title))
+
+          for (const question of section.questions) {
+            n += 1
+            sectionEl.appendChild(renderQuestion(question, n))
+          }
+
+          wrap.appendChild(sectionEl)
+        }
+
+        /* submit */
+        const zone = el("div", "submit-zone")
+        const submitBtn = el("button", "primary", "Submit assessment")
+        submitBtn.id = "submit-btn"
+        submitBtn.addEventListener("click", onSubmitClicked)
+        zone.appendChild(submitBtn)
+        const hint = el("p", "submit-hint")
+        hint.id = "submit-hint"
+        zone.appendChild(hint)
+        wrap.appendChild(zone)
+
+        wrap.appendChild(
+          el(
+            "p",
+            "footnote",
+            "Your answers are written to assessments/assessment1/answers.json on this machine. Nothing is sent anywhere else.",
+          ),
+        )
+
+        app.appendChild(wrap)
+        updateProgress()
+      }
+
+      function renderQuestion(question, number) {
+        const box = el("div", "q")
+        box.id = "box-" + question.id
+        box.dataset.qid = question.id
+
+        const head = el("div", "q-head")
+        head.appendChild(el("span", "q-num", String(number).padStart(2, "0")))
+        head.appendChild(el("span", "q-prompt", question.prompt))
+        box.appendChild(head)
+
+        if (question.code) {
+          const pre = el("pre", "snippet")
+          pre.appendChild(el("code", null, question.code))
+          box.appendChild(pre)
+        }
+
+        const opts = el("div", "opts")
+        question.options.forEach((optionText, index) => {
+          const opt = el("label", "opt")
+          const radio = document.createElement("input")
+          radio.type = "radio"
+          radio.name = question.id
+          radio.value = String(index)
+          if (state.answers[question.id] === index) opt.classList.add("selected")
+          radio.addEventListener("change", () => {
+            state.answers[question.id] = index
+            for (const sibling of opts.children) sibling.classList.remove("selected")
+            opt.classList.add("selected")
+            box.classList.add("answered")
+            box.classList.remove("missing")
+            saveDraft()
+            updateProgress()
+          })
+          opt.appendChild(radio)
+          opt.appendChild(el("span", "letter", LETTERS[index]))
+          opt.appendChild(el("span", null, optionText))
+          opts.appendChild(opt)
+        })
+        box.appendChild(opts)
+
+        if (state.answers[question.id] != null) box.classList.add("answered")
+
+        return box
+      }
+
+      function updateProgress() {
+        const total = state.allQuestions.length
+        const answered = state.allQuestions.filter(q => state.answers[q.id] != null).length
+
+        const counter = document.getElementById("counter")
+        if (counter) counter.textContent = answered + " / " + total + " answered"
+
+        const fill = document.getElementById("bar-fill")
+        if (fill) fill.style.width = (total === 0 ? 0 : (answered / total) * 100) + "%"
+
+        const btn = document.getElementById("submit-btn")
+        const hint = document.getElementById("submit-hint")
+        const nameOk = state.studentName.trim() !== ""
+        if (btn) btn.disabled = !nameOk || state.submitting
+        if (hint) {
+          hint.textContent = !nameOk
+            ? "Enter your name at the top before submitting."
+            : answered < total
+              ? total - answered + " question(s) still unanswered."
+              : "All questions answered."
+        }
+      }
+
+      /* ------------------------------------------------------------------
+         Submission
+      ------------------------------------------------------------------ */
+      const overlay = document.getElementById("overlay")
+      const modalTitle = document.getElementById("modal-title")
+      const modalBody = document.getElementById("modal-body")
+      const modalChips = document.getElementById("modal-chips")
+      const modalCancel = document.getElementById("modal-cancel")
+      const modalConfirm = document.getElementById("modal-confirm")
+
+      modalCancel.addEventListener("click", () => overlay.classList.remove("open"))
+
+      function onSubmitClicked() {
+        const missing = state.allQuestions.filter(q => state.answers[q.id] == null)
+
+        modalChips.replaceChildren()
+
+        if (missing.length > 0) {
+          modalTitle.textContent = "You have unanswered questions"
+          modalBody.textContent =
+            missing.length +
+            " question(s) have no answer. They will be recorded as skipped and marked wrong. Click one to jump to it."
+          missing.forEach(q => {
+            const chip = el("button", "chip", "Q" + (q.number < 10 ? "0" : "") + q.number)
+            chip.addEventListener("click", () => {
+              overlay.classList.remove("open")
+              const target = document.getElementById("box-" + q.id)
+              target.scrollIntoView({ behavior: "smooth", block: "center" })
+              target.classList.add("missing")
+            })
+            modalChips.appendChild(chip)
+          })
+          modalConfirm.textContent = "Submit anyway"
+        } else {
+          modalTitle.textContent = "Submit your assessment?"
+          modalBody.textContent =
+            "All " +
+            state.allQuestions.length +
+            " questions are answered. You only get one submission — after this the answers file is written and locked."
+          modalConfirm.textContent = "Yes, submit"
+        }
+
+        modalConfirm.onclick = submit
+        overlay.classList.add("open")
+      }
+
+      async function submit() {
+        if (state.submitting) return
+        state.submitting = true
+        modalConfirm.disabled = true
+        modalConfirm.textContent = "Submitting…"
+
+        markReturned()
+
+        const submittedAt = new Date().toISOString()
+        const answers = {}
+        const skipped = []
+        for (const q of state.allQuestions) {
+          const choice = state.answers[q.id]
+          answers[q.id] = choice == null ? null : choice
+          if (choice == null) skipped.push(q.id)
+        }
+
+        const totalAway = integrity.focusLog.reduce((sum, f) => sum + f.awaySeconds, 0)
+
+        const payload = {
+          assessment: state.data.assessment,
+          student: state.studentName.trim(),
+          startedAt: state.startedAt,
+          submittedAt,
+          durationSeconds: Math.round(
+            (new Date(submittedAt) - new Date(state.startedAt)) / 1000,
+          ),
+          questionCount: state.allQuestions.length,
+          answeredCount: state.allQuestions.length - skipped.length,
+          answers,
+          skipped,
+          integrity: {
+            focusLossCount: integrity.focusLog.length,
+            totalSecondsAway: totalAway,
+            focusLog: integrity.focusLog,
+            pasteAttempts: integrity.pasteAttempts,
+            copyAttempts: integrity.copyAttempts,
+            userAgent: navigator.userAgent,
+            screen: window.screen.width + "x" + window.screen.height,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          },
+        }
+
+        try {
+          const res = await fetch("/api/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+          const result = await res.json()
+
+          if (!res.ok) {
+            overlay.classList.remove("open")
+            state.submitting = false
+            modalConfirm.disabled = false
+            flash(result.error || "Submission failed.")
+            return
+          }
+
+          localStorage.removeItem(DRAFT_KEY)
+          overlay.classList.remove("open")
+          renderDone(result)
+        } catch (err) {
+          overlay.classList.remove("open")
+          state.submitting = false
+          modalConfirm.disabled = false
+          modalConfirm.textContent = "Submit anyway"
+          flash("Could not reach the server. Is serve.mjs still running?")
+        }
+      }
+
+      function renderDone(result) {
+        app.replaceChildren()
+        const screen = el("div", "center-screen")
+        const card = el("div", "done-card")
+
+        card.appendChild(el("div", "tick", "✓"))
+        card.appendChild(el("h1", null, "Submitted"))
+        card.appendChild(
+          el(
+            "p",
+            "sub",
+            "Your answers were saved to " +
+              result.path +
+              ". You can close this tab now.",
+          ),
+        )
+
+        const next = el("div", "notice")
+        next.style.textAlign = "left"
+        const p = el("p")
+        p.style.margin = "0"
+        p.innerHTML = "<strong>One last step — commit and push it:</strong>"
+        next.appendChild(p)
+        const cmds = el("div", "cmds")
+        cmds.appendChild(
+          el(
+            "pre",
+            null,
+            "git add assessments/assessment1/answers.json\n" +
+              'git commit -m "assessment 1 answers"\n' +
+              "git push",
+          ),
+        )
+        next.appendChild(cmds)
+        card.appendChild(next)
+
+        screen.appendChild(card)
+        app.appendChild(screen)
+
+        window.onbeforeunload = null
+      }
+
+      /* ------------------------------------------------------------------
+         Boot
+      ------------------------------------------------------------------ */
+      async function boot() {
+        if (location.protocol === "file:") {
+          renderError("Start the assessment server first", [
+            "This page has to be served by serve.mjs so your answers can be written to disk.",
+            "Open a terminal in the Habit-Tracker folder and run:  node assessments/serve.mjs",
+          ])
+          return
+        }
+
+        let data
+        try {
+          const res = await fetch("questions.json", { cache: "no-store" })
+          data = await res.json()
+        } catch {
+          renderError("Could not load the questions", [
+            "questions.json could not be fetched. Make sure serve.mjs is running and try refreshing.",
+          ])
+          return
+        }
+
+        let status = { submitted: false }
+        try {
+          const res = await fetch("/api/status", { cache: "no-store" })
+          status = await res.json()
+        } catch {
+          /* status is optional */
+        }
+
+        if (status.submitted) {
+          renderError("This assessment has already been submitted", [
+            "An answers.json already exists for assessment1, submitted at " +
+              status.submittedAt +
+              ".",
+            "Ask your teacher if you need it reset.",
+          ])
+          return
+        }
+
+        loadDraft()
+
+        state.data = data
+        let n = 0
+        state.allQuestions = data.sections.flatMap(section =>
+          section.questions.map(q => {
+            n += 1
+            return { id: q.id, number: n }
+          }),
+        )
+
+        renderTest()
+
+        window.onbeforeunload = () =>
+          "You have not submitted yet. Your progress is saved, but are you sure?"
+      }
+
+      boot()
+    </script>
+  </body>
+</html>
