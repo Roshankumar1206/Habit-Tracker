@@ -1,10 +1,11 @@
 /**
  * Assessment server — zero dependencies, plain Node.
  *
- *   node assessments/serve.mjs
+ *   node assessments/serve.mjs                 # the next assessment you haven't done
+ *   node assessments/serve.mjs assessment2     # a specific one
  *
  * Serves the assessment at http://localhost:5055 and, on submit, writes the
- * answers to assessments/assessment1/answers.json.
+ * answers to assessments/<assessment>/answers.json.
  *
  * Flags:
  *   --port=5055      use a different port
@@ -13,45 +14,41 @@
  */
 
 import { createServer } from "node:http"
-import { readFile, writeFile, mkdir, stat } from "node:fs/promises"
+import { readFile, writeFile } from "node:fs/promises"
 import { createHash } from "node:crypto"
-import { fileURLToPath } from "node:url"
 import { spawn } from "node:child_process"
 import path from "node:path"
 
-const HERE = path.dirname(fileURLToPath(import.meta.url))
-const ANSWER_DIR = path.join(HERE, "assessment1")
-const ANSWER_FILE = path.join(ANSWER_DIR, "answers.json")
+import { ROOT, canonical, resolveAssessment } from "./lib.mjs"
 
 const args = process.argv.slice(2)
-const portArg = args.find(a => a.startsWith("--port="))
-const PORT = portArg ? Number(portArg.split("=")[1]) : 5055
-const OPEN_BROWSER = !args.includes("--no-open")
-const ALLOW_RETAKE = args.includes("--allow-retake")
+const flags = args.filter(a => a.startsWith("--"))
+const requestedId = args.find(a => !a.startsWith("--"))
 
-const STATIC = {
-  "/": { file: "index.html", type: "text/html; charset=utf-8" },
-  "/index.html": { file: "index.html", type: "text/html; charset=utf-8" },
-  "/questions.json": {
-    file: "questions.json",
-    type: "application/json; charset=utf-8",
-  },
+const portArg = flags.find(a => a.startsWith("--port="))
+const PORT = portArg ? Number(portArg.split("=")[1]) : 5055
+const OPEN_BROWSER = !flags.includes("--no-open")
+const ALLOW_RETAKE = flags.includes("--allow-retake")
+
+let assessment
+try {
+  assessment = await resolveAssessment(requestedId, "take")
+} catch (err) {
+  console.error("\n  " + err.message + "\n")
+  process.exit(1)
 }
 
 function json(res, status, body) {
-  const payload = JSON.stringify(body)
   res.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
   })
-  res.end(payload)
+  res.end(JSON.stringify(body))
 }
 
 async function existingSubmission() {
   try {
-    await stat(ANSWER_FILE)
-    const raw = await readFile(ANSWER_FILE, "utf8")
-    return JSON.parse(raw)
+    return JSON.parse(await readFile(assessment.answers, "utf8"))
   } catch {
     return null
   }
@@ -73,18 +70,6 @@ function readBody(req, limitBytes = 2_000_000) {
     req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")))
     req.on("error", reject)
   })
-}
-
-/** Stable stringify so the hash doesn't depend on key order. */
-function canonical(value) {
-  if (value === null || typeof value !== "object") return JSON.stringify(value)
-  if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]"
-  const keys = Object.keys(value).sort()
-  return (
-    "{" +
-    keys.map(k => JSON.stringify(k) + ":" + canonical(value[k])).join(",") +
-    "}"
-  )
 }
 
 async function handleSubmit(req, res) {
@@ -117,7 +102,7 @@ async function handleSubmit(req, res) {
   }
 
   const record = {
-    assessment: payload.assessment ?? "assessment1",
+    assessment: assessment.id,
     student: payload.student.trim(),
     startedAt: payload.startedAt ?? null,
     submittedAt: payload.submittedAt ?? new Date().toISOString(),
@@ -136,10 +121,16 @@ async function handleSubmit(req, res) {
     note: "Recomputed by grade.mjs. A mismatch means the file was edited after submission.",
   }
 
-  await mkdir(ANSWER_DIR, { recursive: true })
-  await writeFile(ANSWER_FILE, JSON.stringify(record, null, 2) + "\n", "utf8")
+  await writeFile(
+    assessment.answers,
+    JSON.stringify(record, null, 2) + "\n",
+    "utf8",
+  )
 
-  const away = record.integrity.totalSecondsAway ?? 0
+  const relative = path
+    .relative(path.dirname(ROOT), assessment.answers)
+    .replaceAll("\\", "/")
+
   console.log("")
   console.log("  ✓ Submission received from " + record.student)
   console.log("    answered   " + record.answeredCount + " / " + record.questionCount)
@@ -148,27 +139,22 @@ async function handleSubmit(req, res) {
     "    tab left   " +
       (record.integrity.focusLossCount ?? 0) +
       " time(s), " +
-      away +
+      (record.integrity.totalSecondsAway ?? 0) +
       "s away",
   )
-  console.log("    written to " + ANSWER_FILE)
+  console.log("    written to " + relative)
   console.log("")
   console.log("  Now commit it:")
-  console.log("    git add assessments/assessment1/answers.json")
-  console.log('    git commit -m "assessment 1 answers"')
+  console.log("    git add " + relative)
+  console.log('    git commit -m "' + assessment.id + ' answers"')
   console.log("    git push")
   console.log("")
 
-  json(res, 200, {
-    ok: true,
-    path: "assessments/assessment1/answers.json",
-    checksum: record.checksum.value,
-  })
+  json(res, 200, { ok: true, path: relative, checksum: record.checksum.value })
 }
 
 const server = createServer(async (req, res) => {
-  const url = new URL(req.url, "http://localhost")
-  const route = url.pathname
+  const route = new URL(req.url, "http://localhost").pathname
 
   if (req.method === "POST" && route === "/api/submit") {
     try {
@@ -183,21 +169,35 @@ const server = createServer(async (req, res) => {
   if (req.method === "GET" && route === "/api/status") {
     const already = await existingSubmission()
     json(res, 200, {
+      assessment: assessment.id,
       submitted: already != null && !ALLOW_RETAKE,
       submittedAt: already?.submittedAt ?? null,
     })
     return
   }
 
-  const asset = STATIC[route]
+  /* The UI is shared; the questions come from the active assessment folder. */
+  const assets = {
+    "/": { file: path.join(ROOT, "index.html"), type: "text/html; charset=utf-8" },
+    "/index.html": {
+      file: path.join(ROOT, "index.html"),
+      type: "text/html; charset=utf-8",
+    },
+    "/questions.json": {
+      file: assessment.questions,
+      type: "application/json; charset=utf-8",
+    },
+  }
+
+  const asset = assets[route]
   if (req.method === "GET" && asset != null) {
     try {
-      const body = await readFile(path.join(HERE, asset.file))
+      const body = await readFile(asset.file)
       res.writeHead(200, { "Content-Type": asset.type, "Cache-Control": "no-store" })
       res.end(body)
     } catch {
       res.writeHead(500, { "Content-Type": "text/plain" })
-      res.end("Could not read " + asset.file)
+      res.end("Could not read " + path.basename(asset.file))
     }
     return
   }
@@ -209,9 +209,11 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, () => {
   const url = "http://localhost:" + PORT
   console.log("")
-  console.log("  Habit Tracker assessment")
+  console.log("  Habit Tracker — " + assessment.id)
   console.log("  " + url)
-  if (ALLOW_RETAKE) console.log("  (retake mode — an existing answers.json will be overwritten)")
+  if (ALLOW_RETAKE) {
+    console.log("  (retake mode — an existing answers.json will be overwritten)")
+  }
   console.log("")
   console.log("  Leave this window open while taking the test. Ctrl+C to stop.")
   console.log("")

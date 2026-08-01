@@ -1,50 +1,52 @@
 /**
- * Grader — TEACHER ONLY. Requires answer-key.json, which is gitignored.
+ * Grader — TEACHER ONLY. Needs <assessment>/answer-key.json, which is gitignored.
  *
- *   node assessments/grade.mjs
+ *   node assessments/grade.mjs                 # the most recent submission
+ *   node assessments/grade.mjs assessment2     # a specific one
  *
  * Prints a score with a per-topic breakdown and an integrity summary, and
- * writes assessments/assessment1/report.md (also gitignored).
+ * writes <assessment>/report.md (also gitignored).
  */
 
 import { readFile, writeFile } from "node:fs/promises"
 import { createHash } from "node:crypto"
-import { fileURLToPath } from "node:url"
 import path from "node:path"
 
-const HERE = path.dirname(fileURLToPath(import.meta.url))
+import { ROOT, canonical, resolveAssessment } from "./lib.mjs"
+
 const LETTERS = ["A", "B", "C", "D", "E", "F"]
+
+const requestedId = process.argv.slice(2).find(a => !a.startsWith("--"))
+
+let assessment
+try {
+  assessment = await resolveAssessment(requestedId, "grade")
+} catch (err) {
+  console.error("\n  " + err.message + "\n")
+  process.exit(1)
+}
 
 async function readJson(file, hint) {
   try {
-    return JSON.parse(await readFile(path.join(HERE, file), "utf8"))
+    return JSON.parse(await readFile(file, "utf8"))
   } catch (err) {
-    console.error("\n  Could not read " + file)
+    console.error("\n  Could not read " + path.relative(ROOT, file).replaceAll("\\", "/"))
     if (hint) console.error("  " + hint)
     console.error("  (" + err.message + ")\n")
     process.exit(1)
   }
 }
 
-function canonical(value) {
-  if (value === null || typeof value !== "object") return JSON.stringify(value)
-  if (Array.isArray(value)) return "[" + value.map(canonical).join(",") + "]"
-  const keys = Object.keys(value).sort()
-  return (
-    "{" +
-    keys.map(k => JSON.stringify(k) + ":" + canonical(value[k])).join(",") +
-    "}"
-  )
-}
-
-const questions = await readJson("questions.json")
+const questions = await readJson(assessment.questions)
 const key = await readJson(
-  "answer-key.json",
-  "This is the teacher-only key. It should sit beside grade.mjs and never be committed.",
+  assessment.key,
+  "This is the teacher-only key. It belongs in " +
+    assessment.id +
+    "/ and must never be committed.",
 )
 const submission = await readJson(
-  "assessment1/answers.json",
-  "No submission yet — has the student run serve.mjs, taken the test and pushed?",
+  assessment.answers,
+  "No submission yet — has the student taken " + assessment.id + " and pushed?",
 )
 
 /* ---------- flatten questions, keeping section membership ---------- */
@@ -103,14 +105,19 @@ for (const r of results) {
 const line = "─".repeat(64)
 console.log("")
 console.log(line)
-console.log("  " + (submission.student ?? "Unknown student") + " — " + questions.title)
+console.log(
+  "  " +
+    (submission.student ?? "Unknown student") +
+    " — " +
+    assessment.id +
+    " — " +
+    questions.title,
+)
 console.log(line)
 console.log("")
 console.log("  Score        " + right + " / " + total + "   (" + percent + "%)")
 console.log("  Skipped      " + skipped)
-console.log(
-  "  Duration     " + Math.round((submission.durationSeconds ?? 0) / 60) + " min",
-)
+console.log("  Duration     " + Math.round((submission.durationSeconds ?? 0) / 60) + " min")
 console.log("  Submitted    " + (submission.submittedAt ?? "?"))
 console.log("")
 console.log("  By topic")
@@ -176,6 +183,7 @@ console.log("")
 const md = []
 md.push("# " + (submission.student ?? "Unknown") + " — " + questions.title)
 md.push("")
+md.push("- **Assessment:** " + assessment.id)
 md.push("- **Score:** " + right + " / " + total + " (" + percent + "%)")
 md.push("- **Skipped:** " + skipped)
 md.push("- **Duration:** " + Math.round((submission.durationSeconds ?? 0) / 60) + " min")
@@ -221,7 +229,9 @@ for (const r of results) {
   md.push("")
 }
 
-const reportPath = path.join(HERE, "assessment1", "report.md")
-await writeFile(reportPath, md.join("\n"), "utf8")
-console.log("  Full review written to assessments/assessment1/report.md")
+await writeFile(assessment.report, md.join("\n"), "utf8")
+console.log(
+  "  Full review written to " +
+    path.relative(path.dirname(ROOT), assessment.report).replaceAll("\\", "/"),
+)
 console.log("")
