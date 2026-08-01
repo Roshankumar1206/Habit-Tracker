@@ -8,11 +8,12 @@
  *     serve.mjs           shared runner
  *     grade.mjs           shared grader
  *     lib.mjs             this file
+ *     report.mjs          HTML review renderer
  *     assessment1/
  *       questions.json    the questions
  *       answer-key.json   gitignored
  *       answers.json      written on submit
- *       report.md         gitignored
+ *       report.html       the graded review
  *     assessment2/
  *       ...
  */
@@ -60,7 +61,7 @@ export async function listAssessments() {
       questions: path.join(dir, "questions.json"),
       key: path.join(dir, "answer-key.json"),
       answers: path.join(dir, "answers.json"),
-      report: path.join(dir, "report.md"),
+      report: path.join(dir, "report.html"),
       submitted: await exists(path.join(dir, "answers.json")),
     })
   }

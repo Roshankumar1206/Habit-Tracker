@@ -1,6 +1,6 @@
 # TEACHER ONLY — never commit. Applies to every assessmentN folder.
 */answer-key.json
 
-# Note: report.md is deliberately NOT ignored. It is the review document —
+# Note: report.html is deliberately NOT ignored. It is the review document —
 # it contains the correct answers, so it is only ever generated after that
 # assessment has been submitted and locked.

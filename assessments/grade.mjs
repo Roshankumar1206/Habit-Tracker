@@ -13,6 +13,7 @@ import { createHash } from "node:crypto"
 import path from "node:path"
 
 import { ROOT, canonical, resolveAssessment } from "./lib.mjs"
+import { renderReport } from "./report.mjs"
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"]
 
@@ -80,6 +81,7 @@ for (const [id, q] of lookup) {
     number: q.number,
     section: q.section,
     prompt: q.prompt,
+    code: q.code ?? null,
     options: q.options,
     expected,
     given: given == null ? null : given,
@@ -179,59 +181,26 @@ console.log("")
 console.log(line)
 console.log("")
 
-/* ---------- markdown report ---------- */
-const md = []
-md.push("# " + (submission.student ?? "Unknown") + " — " + questions.title)
-md.push("")
-md.push("- **Assessment:** " + assessment.id)
-md.push("- **Score:** " + right + " / " + total + " (" + percent + "%)")
-md.push("- **Skipped:** " + skipped)
-md.push("- **Duration:** " + Math.round((submission.durationSeconds ?? 0) / 60) + " min")
-md.push("- **Submitted:** " + (submission.submittedAt ?? "?"))
-md.push("- **Checksum:** " + checksumVerdict)
-md.push(
-  "- **Left the tab:** " +
-    (integrity.focusLossCount ?? 0) +
-    " time(s), " +
-    (integrity.totalSecondsAway ?? 0) +
-    "s total",
-)
-md.push("")
-md.push("## By topic")
-md.push("")
-md.push("| Topic | Score |")
-md.push("| --- | --- |")
-for (const [section, bucket] of bySection) {
-  md.push("| " + section + " | " + bucket.right + " / " + bucket.total + " |")
-}
-md.push("")
-md.push("## Review")
-md.push("")
-for (const r of results) {
-  md.push("### Q" + String(r.number).padStart(2, "0") + (r.correct ? " ✅" : " ❌"))
-  md.push("")
-  md.push(r.prompt)
-  md.push("")
-  r.options.forEach((opt, i) => {
-    const marks = []
-    if (i === r.expected) marks.push("correct")
-    if (i === r.given) marks.push("his answer")
-    md.push(
-      "- **" +
-        LETTERS[i] +
-        ".** " +
-        opt +
-        (marks.length > 0 ? "  _(" + marks.join(", ") + ")_" : ""),
-    )
-  })
-  md.push("")
-  if (r.why) md.push("> " + r.why)
-  md.push("")
-}
+/* ---------- HTML report ---------- */
+const html = renderReport({
+  assessmentId: assessment.id,
+  title: questions.title,
+  submission,
+  results,
+  bySection,
+  right,
+  total,
+  skipped,
+  percent,
+  checksumVerdict,
+  integrity,
+})
 
-await writeFile(assessment.report, md.join("\n"), "utf8")
+await writeFile(assessment.report, html, "utf8")
 console.log(
   "  Full review written to " +
     path.relative(path.dirname(ROOT), assessment.report).replaceAll("\\", "/"),
 )
+console.log("  Open it in a browser to read it.")
 console.log("")
+

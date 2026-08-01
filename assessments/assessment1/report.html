@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="data:," />
+<title>Mekala Roshan Kumar — assessment1 review</title>
+<style>
+  :root {
+    --bg:#18181b; --panel:#27272a; --line:#3f3f46; --text:#fafafa;
+    --muted:#a1a1aa; --dim:#71717a; --accent:#8b5cf6;
+    --good:#22c55e; --mid:#f59e0b; --poor:#ef4444;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text); line-height:1.55;
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre {
+    font-family:ui-monospace,SFMono-Regular,"Cascadia Mono",Consolas,monospace;
+    font-variant-ligatures:none;
+  }
+  .wrap { max-width:820px; margin:0 auto; padding:2.5rem 1rem 5rem; }
+
+  .eyebrow { color:var(--accent); font-size:.78rem; letter-spacing:.12em;
+    text-transform:uppercase; font-weight:600; }
+  h1 { font-size:2rem; margin:.35rem 0 1.5rem; letter-spacing:-.02em; }
+
+  .scoreline { display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line); border-radius:.9rem; padding:1.5rem; }
+  .big { font-size:3.2rem; font-weight:700; line-height:1; letter-spacing:-.03em; }
+  .big.good { color:var(--good); } .big.mid { color:var(--mid); } .big.poor { color:var(--poor); }
+  .big span { font-size:1.4rem; opacity:.6; }
+  .score-meta { color:var(--muted); font-size:.9rem; }
+  .score-meta strong { color:var(--text); }
+
+  h2 { font-size:.82rem; text-transform:uppercase; letter-spacing:.1em; color:var(--accent);
+    margin:2.5rem 0 1rem; padding-bottom:.5rem; border-bottom:1px solid var(--line); }
+
+  .topic { display:grid; grid-template-columns:1fr 200px 52px; gap:1rem;
+    align-items:center; padding:.5rem 0; font-size:.9rem; }
+  .topic-name { color:var(--muted); }
+  .track { background:var(--bg); border:1px solid var(--line); border-radius:999px;
+    height:9px; overflow:hidden; }
+  .bar { display:block; height:100%; border-radius:999px; }
+  .bar.good { background:var(--good); } .bar.mid { background:var(--mid); } .bar.poor { background:var(--poor); }
+  .topic-score { text-align:right; color:var(--dim); font-variant-numeric:tabular-nums; }
+
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.75rem; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:.6rem; padding:.85rem 1rem; }
+  .stat-label { color:var(--dim); font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; }
+  .stat-value { font-size:1.05rem; margin-top:.2rem; }
+  .stat-value.ok { color:var(--good); }
+  .stat-value.alert { color:var(--poor); }
+
+  .controls { display:flex; gap:.5rem; margin:2.5rem 0 1.25rem; flex-wrap:wrap; }
+  .controls button { background:var(--panel); color:var(--muted); border:1px solid var(--line);
+    border-radius:999px; padding:.45rem 1.1rem; font-size:.85rem; cursor:pointer; font-family:inherit; }
+  .controls button:hover { color:var(--text); }
+  .controls button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+  .card { background:var(--panel); border:1px solid var(--line); border-left-width:3px;
+    border-radius:.75rem; padding:1.25rem; margin-bottom:1rem; }
+  .card.right { border-left-color:var(--good); }
+  .card.wrong { border-left-color:var(--poor); }
+  .card-head { display:grid; grid-template-columns:auto auto 1fr; gap:.6rem;
+    align-items:baseline; margin-bottom:.9rem; }
+  .num { color:var(--dim); font-size:.8rem; font-variant-numeric:tabular-nums; }
+  .mark { font-weight:700; }
+  .card.right .mark { color:var(--good); }
+  .card.wrong .mark { color:var(--poor); }
+  .prompt { margin:0; font-size:.97rem; }
+
+  .snippet { background:#131316; border:1px solid var(--line); border-radius:.5rem;
+    padding:.8rem 1rem; margin:0 0 .9rem; overflow-x:auto; font-size:.8rem;
+    line-height:1.55; color:#d4d4d8; }
+
+  .opts { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.4rem; }
+  .opt { display:flex; gap:.65rem; align-items:flex-start; background:var(--bg);
+    border:1px solid var(--line); border-radius:.5rem; padding:.55rem .75rem; font-size:.9rem; }
+  .opt.is-correct { border-color:var(--good); background:rgba(34,197,94,.1); }
+  .opt.is-wrong { border-color:var(--poor); background:rgba(239,68,68,.1); }
+  .letter { flex-shrink:0; width:1.3rem; height:1.3rem; border-radius:999px;
+    border:1px solid var(--line); display:grid; place-items:center; font-size:.7rem;
+    color:var(--muted); margin-top:.1rem; }
+  .opt.is-correct .letter { background:var(--good); border-color:var(--good); color:#052e16; font-weight:700; }
+  .opt.is-wrong .letter { background:var(--poor); border-color:var(--poor); color:#450a0a; font-weight:700; }
+  .opt-text { flex:1; }
+  .tag { flex-shrink:0; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em;
+    padding:.15rem .5rem; border-radius:.3rem; align-self:center; white-space:nowrap; }
+  .tag.ok { background:var(--good); color:#052e16; }
+  .tag.bad { background:var(--poor); color:#450a0a; }
+
+  .skipped-note { color:var(--poor); font-size:.85rem; margin:.75rem 0 0; }
+  .why { color:var(--muted); font-size:.88rem; margin:.9rem 0 0; padding-top:.8rem;
+    border-top:1px solid var(--line); }
+  .why strong { color:var(--text); }
+
+  .foot { color:var(--dim); font-size:.78rem; text-align:center; margin-top:3rem; }
+
+  @media (max-width:560px) {
+    .topic { grid-template-columns:1fr 44px; }
+    .track { display:none; }
+    .tag { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">assessment1 · Habit Tracker — Understanding Check</div>
+  <h1>Mekala Roshan Kumar</h1>
+
+  <div class="scoreline">
+    <div class="big mid">57<span>%</span></div>
+    <div class="score-meta">
+      <strong>23 of 40</strong> correct<br />
+      Took <strong>21 minutes</strong><br />
+      Submitted 2026-08-01T07:39:49.901Z
+    </div>
+  </div>
+
+  <h2>By topic</h2>
+  <div class="topics">
+      <div class="topic">
+        <span class="topic-name">1. Project Setup &amp; Tooling</span>
+        <span class="track"><span class="bar mid" style="width:50%"></span></span>
+        <span class="topic-score">2/4</span>
+      </div>
+      <div class="topic">
+        <span class="topic-name">2. Components, JSX &amp; Rendering Lists</span>
+        <span class="track"><span class="bar poor" style="width:33%"></span></span>
+        <span class="topic-score">2/6</span>
+      </div>
+      <div class="topic">
+        <span class="topic-name">3. State, Events &amp; Immutability</span>
+        <span class="track"><span class="bar good" style="width:78%"></span></span>
+        <span class="topic-score">7/9</span>
+      </div>
+      <div class="topic">
+        <span class="topic-name">4. Effects &amp; Custom Hooks</span>
+        <span class="track"><span class="bar mid" style="width:57%"></span></span>
+        <span class="topic-score">4/7</span>
+      </div>
+      <div class="topic">
+        <span class="topic-name">5. The Context API</span>
+        <span class="track"><span class="bar mid" style="width:50%"></span></span>
+        <span class="topic-score">2/4</span>
+      </div>
+      <div class="topic">
+        <span class="topic-name">6. TypeScript &amp; the Button Component</span>
+        <span class="track"><span class="bar good" style="width:75%"></span></span>
+        <span class="topic-score">3/4</span>
+      </div>
+      <div class="topic">
+        <span class="topic-name">7. App Logic &amp; date-fns</span>
+        <span class="track"><span class="bar mid" style="width:50%"></span></span>
+        <span class="topic-score">3/6</span>
+      </div>
+  </div>
+
+  <h2>Integrity</h2>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">File checksum</div>
+      <div class="stat-value ok">Verified</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Left the tab</div>
+      <div class="stat-value ok">0 time(s)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total time away</div>
+      <div class="stat-value ok">0s</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Paste attempts</div>
+      <div class="stat-value ok">0</div>
+    </div>
+  </div>
+
+  <h2>Question by question</h2>
+  <div class="controls">
+    <button data-filter="all" aria-pressed="true">All 40</button>
+    <button data-filter="wrong" aria-pressed="false">Wrong only (17)</button>
+    <button data-filter="right" aria-pressed="false">Correct only (23)</button>
+  </div>
+
+  <div class="review">
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">01</span>
+          <span class="mark">✓</span>
+          <p class="prompt">Looking at the scripts in package.json, which command starts the local development server with hot reload?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">npm run build</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">npm run preview</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">npm run dev</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">npm run lint</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> dev runs vite with HMR; build compiles, preview serves the built output.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">02</span>
+          <span class="mark">✗</span>
+          <p class="prompt">The build script is &quot;tsc -b &amp;&amp; vite build&quot;. What does the tsc -b part do before Vite runs?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">Type-checks the TypeScript project and fails the build if there are type errors</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">Installs any missing npm packages</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">Minifies the CSS output</span></li>
+          <li class="opt is-wrong"><span class="letter">D</span><span class="opt-text">Runs the ESLint rules</span><span class="tag bad">his answer</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Vite strips types without checking them, so tsc -b is what actually type-checks the project.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">03</span>
+          <span class="mark">✓</span>
+          <p class="prompt">index.html contains &lt;div id=&quot;root&quot;&gt;&lt;/div&gt;. Which line in main.tsx is what actually attaches React to that element?</p>
+        </div>
+        <pre class="snippet"><code>import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+createRoot(document.getElementById('root')!).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;,
+)</code></pre>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">import './index.css'</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">&lt;StrictMode&gt;</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">import App from './App.tsx'</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">createRoot(document.getElementById('root')!).render(...)</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> createRoot takes the DOM node and render() mounts the tree into it.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">04</span>
+          <span class="mark">✗</span>
+          <p class="prompt">Why is &lt;App /&gt; wrapped in &lt;StrictMode&gt; in main.tsx?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">It makes the production bundle smaller</span></li>
+          <li class="opt is-wrong"><span class="letter">B</span><span class="opt-text">It is required for TypeScript to compile .tsx files</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It stops users from opening the browser devtools</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">In development it runs extra checks and deliberately double-invokes certain functions to surface bugs</span><span class="tag ok">correct answer</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> StrictMode is dev-only: double-invokes renders/effects to expose impure code and missing cleanup.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">05</span>
+          <span class="mark">✗</span>
+          <p class="prompt">In HabitList.tsx you render habits.map(habit =&gt; &lt;HabitItem key={habit.id} ... /&gt;). Why does React need the key prop?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-wrong"><span class="letter">A</span><span class="opt-text">It sets the id attribute on the rendered HTML element</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">It tells React what order to sort the list in</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">It lets React match each item across renders so it can update and reorder the list correctly</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It is required by TypeScript whenever you map over an array</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Keys are React's identity for list items across renders.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">06</span>
+          <span class="mark">✓</span>
+          <p class="prompt">What is the main problem with using key={index} instead of key={habit.id} in that same list?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Nothing — index keys are always fine</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">When a habit is deleted from the middle, all the indices shift and React can end up associating DOM or state with the wrong habit</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">React throws a runtime error</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">The list would render in reverse order</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Index keys break on insert/delete/reorder — state can stick to the wrong row.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">07</span>
+          <span class="mark">✓</span>
+          <p class="prompt">In HabitItem you have {streak !== 0 &amp;&amp; &lt;span className=&quot;text-sm text-amber-400&quot;&gt;🔥 {streak}&lt;/span&gt;}. What appears on screen when streak is 0?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">Nothing is rendered for that expression</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">The number 0 appears on screen</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">The word false appears on screen</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">React throws an error</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> false short-circuits and React renders nothing for booleans.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">08</span>
+          <span class="mark">✗</span>
+          <p class="prompt">Suppose that same line had been written as {streak &amp;&amp; &lt;span&gt;🔥 {streak}&lt;/span&gt;} — without the !== 0 check. What would show on screen when streak is 0?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">The number 0 would be rendered on screen</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">undefined would render</span></li>
+          <li class="opt is-wrong"><span class="letter">C</span><span class="opt-text">Nothing would render</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">React would throw an error</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> 0 is falsy but is NOT a boolean, so React renders the 0. This is why the !== 0 check is there.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">09</span>
+          <span class="mark">✗</span>
+          <p class="prompt">In App.tsx, &lt;HabitProvider&gt; wraps &lt;Header /&gt;, &lt;HabitForm /&gt; and &lt;HabitList /&gt;. What is it inside HabitProvider that makes those three components actually appear on the page?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">HabitProvider renders its children prop</span><span class="tag ok">correct answer</span></li>
+          <li class="opt is-wrong"><span class="letter">B</span><span class="opt-text">The useEffect inside App.tsx</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">React automatically renders anything nested inside any component</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">The key prop</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> HabitProvider takes children: ReactNode and renders it inside the context provider.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">10</span>
+          <span class="mark">✗</span>
+          <p class="prompt">Button.tsx renders &lt;button {...props} className={...} /&gt; and never mentions children anywhere. So how does the text &quot;Add Habit&quot; still end up inside the button?</p>
+        </div>
+        <pre class="snippet"><code>export function Button({ variant = &quot;primary&quot;, className, ...props }: ButtonProps) {
+  return (
+    &lt;button
+      {...props}
+      className={twMerge(&quot;...&quot;, getVariantStyles(variant), className)}
+    /&gt;
+  )
+}
+
+// used as:  &lt;Button disabled={...}&gt;Add Habit&lt;/Button&gt;</code></pre>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">React automatically forwards any text it finds</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">children is just another prop, so it gets passed through by the {...props} spread</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">The Button component reads the text back out of the DOM</span></li>
+          <li class="opt is-wrong"><span class="letter">D</span><span class="opt-text">twMerge injects the text into the button</span><span class="tag bad">his answer</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> children is an ordinary prop, so it flows through the {...props} rest spread.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">11</span>
+          <span class="mark">✗</span>
+          <p class="prompt">In const [weekOffset, setWeekOffset] = useState(0), what is the [weekOffset, setWeekOffset] syntax doing?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Object destructuring</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">Array destructuring of the pair that useState returns</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">Using the spread operator</span></li>
+          <li class="opt is-wrong"><span class="letter">D</span><span class="opt-text">Declaring a TypeScript tuple type</span><span class="tag bad">his answer</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> useState returns a two-element array; the brackets destructure it.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">12</span>
+          <span class="mark">✓</span>
+          <p class="prompt">The Next button uses setWeekOffset(o =&gt; o + 1) rather than setWeekOffset(weekOffset + 1). Why prefer the function form?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">It is required whenever the piece of state is a number</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">It is purely a style preference with no behavioural difference</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It avoids triggering a re-render</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">It updates based on the latest queued state value, which stays correct even when React batches updates</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> The updater receives the latest pending state, so it survives batching and stale closures.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">13</span>
+          <span class="mark">✓</span>
+          <p class="prompt">App.tsx recalculates visibleDates on every render from weekOffset, instead of storing it in its own useState. What is this approach called?</p>
+        </div>
+        <pre class="snippet"><code>const [weekOffset, setWeekOffset] = useState(0)
+
+const week = addWeeks(new Date(), weekOffset)
+const visibleDates = eachDayOfInterval({
+  start: startOfWeek(week, { weekStartsOn: 1 }),
+  end: endOfWeek(week, { weekStartsOn: 1 }),
+})</code></pre>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">Derived state — computing a value from existing state instead of duplicating it in another useState</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">Prop drilling</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">A side effect</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">Memoization</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Anything computable from existing state should be computed, not stored — no sync bugs.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">14</span>
+          <span class="mark">✓</span>
+          <p class="prompt">The input in HabitForm.tsx has both value={name} and onChange={e =&gt; setName(e.target.value)}. This makes it:</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">A controlled input, where React state is the single source of truth</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">An uncontrolled input</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">A ref-based input</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">A native HTML form action</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> value + onChange = controlled; React state drives the DOM.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">15</span>
+          <span class="mark">✗</span>
+          <p class="prompt">If you deleted value={name} from that input but kept the onChange handler, what would happen when setName(&quot;&quot;) runs after submitting?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-wrong"><span class="letter">A</span><span class="opt-text">The input would clear exactly as it does now</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">React would throw a warning and crash</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">The typed text would stay in the box, because the DOM is now holding the value instead of React</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">The form would submit a second time</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Without value, the input is uncontrolled — React no longer drives what is displayed.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">16</span>
+          <span class="mark">✓</span>
+          <p class="prompt">What does e.preventDefault() do at the top of handleSubmit?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">It stops the click from bubbling up to parent elements</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">It prevents the browser's default form submission, which would reload the whole page</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It stops the habit from being added twice</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It prevents the input from being cleared</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Default form submit navigates/reloads. Note it does NOT stop propagation.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">17</span>
+          <span class="mark">✓</span>
+          <p class="prompt">deleteHabit is written as setHabits(curr =&gt; curr.filter(h =&gt; h.id !== id)). Why use filter instead of finding the index and calling curr.splice(i, 1)?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">filter runs faster than splice</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">splice does not exist on arrays</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">filter returns a brand-new array, whereas splice mutates the existing state array in place and React can miss the change</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">filter also sorts the array for you</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> State must be replaced, not mutated. splice mutates the same array reference.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">18</span>
+          <span class="mark">✓</span>
+          <p class="prompt">In toggleHabit you return { ...h, completions } rather than doing h.completions = completions and returning h. Why does that matter?</p>
+        </div>
+        <pre class="snippet"><code>function toggleHabit(id: string, date: Date) {
+  setHabits(curr =&gt;
+    curr.map(h =&gt; {
+      if (h.id !== id) return h
+
+      const alreadyDone = h.completions.some(c =&gt; isSameDay(c, date))
+      const completions = alreadyDone
+        ? h.completions.filter(c =&gt; !isSameDay(c, date))
+        : [...h.completions, date]
+
+      return { ...h, completions }
+    }),
+  )
+}</code></pre>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Spread syntax is shorter to type</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">It produces a new habit object instead of mutating state, which is how React detects that something changed</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It removes the old habit from the array</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It converts the habit into JSON</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Same immutability rule at the object level — new reference signals the change.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">19</span>
+          <span class="mark">✓</span>
+          <p class="prompt">addHabit uses crypto.randomUUID() for the habit id. Why would using habits.length as the id be a bug?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">length is a string, not a number</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">It would be noticeably slower to compute</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">React does not allow ids that are numbers</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">After a habit is deleted, lengths repeat — so two different habits could end up with the same id</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Ids must be stable and unique; length collides after deletion.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">20</span>
+          <span class="mark">✗</span>
+          <p class="prompt">In the useEffect in App.tsx, what is the returned function for?</p>
+        </div>
+        <pre class="snippet"><code>useEffect(() =&gt; {
+  function handler() {
+    console.log(weekOffset)
+  }
+  document.addEventListener(&quot;click&quot;, handler)
+
+  return () =&gt; {
+    document.removeEventListener(&quot;click&quot;, handler)
+  }
+}, [weekOffset])</code></pre>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">It is the cleanup function — React runs it before the effect runs again and when the component unmounts, so listeners don't pile up</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">It runs once before the very first render</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It cancels the click event</span></li>
+          <li class="opt is-wrong"><span class="letter">D</span><span class="opt-text">It is the value the effect hands back to the parent component</span><span class="tag bad">his answer</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Cleanup runs before the next effect and on unmount; without it listeners accumulate.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">21</span>
+          <span class="mark">✗</span>
+          <p class="prompt">That effect's dependency array is [weekOffset]. What happens each time weekOffset changes?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-wrong"><span class="letter">A</span><span class="opt-text">Nothing — an effect only ever runs once</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">The component unmounts and remounts</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">The cleanup runs first to remove the old listener, then the effect body runs again and adds a fresh one</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">The effect body runs again but the cleanup never does</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Dependency change = cleanup then re-run, which is how the handler gets a fresh weekOffset.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">22</span>
+          <span class="mark">✓</span>
+          <p class="prompt">If that dependency array were [] instead of [weekOffset], what would console.log(weekOffset) print after you clicked Next several times and then clicked the page?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">The current weekOffset each time</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">undefined</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It would throw an error</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">Always 0, because the handler captured the value from the first render and was never replaced</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Classic stale closure — the handler is never replaced so it keeps the first render's value.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">23</span>
+          <span class="mark">✓</span>
+          <p class="prompt">If the dependency array were removed entirely — useEffect(() =&gt; { ... }) with no second argument — how often would the effect run?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Only once, after the first render</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">After every single render</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">Never</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">Only when the component unmounts</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> No dependency array means run after every render.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">24</span>
+          <span class="mark">✗</span>
+          <p class="prompt">useLocalStorage calls useState&lt;T&gt;(() =&gt; { ... }) — passing a function rather than a plain value. What does that achieve?</p>
+        </div>
+        <pre class="snippet"><code>const [storedValue, setStoredValue] = useState&lt;T&gt;(() =&gt; {
+  try {
+    const item = localStorage.getItem(key)
+    if (item == null) return initialValue
+
+    return JSON.parse(item, dateReviver)
+  } catch {
+    return initialValue
+  }
+})</code></pre>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">It is a lazy initializer — the localStorage read and JSON.parse run only on the first render instead of on every render</span><span class="tag ok">correct answer</span></li>
+          <li class="opt is-wrong"><span class="letter">B</span><span class="opt-text">It makes the state update asynchronous</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It is required syntax whenever useState is given a generic type</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It prevents the state from ever changing</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Lazy initializer — the function only runs on the first render, so localStorage isn't read every time.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">25</span>
+          <span class="mark">✓</span>
+          <p class="prompt">useLocalStorage ends with return [storedValue, setStoredValue] as const. What is as const doing there?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Making the array read-only at runtime</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">Freezing the state value so it cannot be reassigned</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">Typing the return as a fixed tuple [T, setter] instead of a mixed array, so destructuring gives each variable the right type</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">Nothing — it could be removed with no effect</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Without as const TS widens it to (T | setter)[] and destructuring loses the types.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">26</span>
+          <span class="mark">✓</span>
+          <p class="prompt">The useEffect inside useLocalStorage has [storedValue, key] as its dependencies. When does it write to localStorage?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Only once, when the component mounts</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">After every render, unconditionally</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">Before the component renders</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">After any render in which storedValue or key changed</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Effects run after render, and only when a listed dependency changed.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">27</span>
+          <span class="mark">✗</span>
+          <p class="prompt">Why does this app put habits in a Context instead of passing them down as props from App?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Context is faster than passing props</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">It avoids prop drilling — Header and HabitList read the habits directly instead of App threading them through every level</span><span class="tag ok">correct answer</span></li>
+          <li class="opt is-wrong"><span class="letter">C</span><span class="opt-text">Props cannot hold arrays or functions</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">Context saves the data to a server</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Avoids prop drilling; consumers subscribe directly.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">28</span>
+          <span class="mark">✓</span>
+          <p class="prompt">In usehabit.ts the context is created as createContext&lt;null | Context&gt;(null). Why is null part of the type and used as the default value?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">Because a component rendered outside HabitProvider would receive that default, so the type has to admit that possibility</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">Because TypeScript requires every context to allow null</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">Because context values are always null and stay null</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">To make every field inside the context optional</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> The default is what a consumer outside the provider sees, so the type must include it.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">29</span>
+          <span class="mark">✗</span>
+          <p class="prompt">useHabits() does if (habitContext == null) throw new Error(&quot;Null context&quot;). What does that guard buy you?</p>
+        </div>
+        <pre class="snippet"><code>export function useHabits() {
+  const habitContext = useContext(HabitContext)
+  if (habitContext == null) throw new Error(&quot;Null context&quot;)
+
+  return habitContext
+}</code></pre>
+        <ul class="opts">
+          <li class="opt is-wrong"><span class="letter">A</span><span class="opt-text">It replaces the null with an empty context object</span><span class="tag bad">his answer</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">It gives a clear error if the hook is used outside HabitProvider, and it narrows the type so every caller can use the value without null-checking</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It creates a new context on the fly</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It only logs a warning to the console</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Fail loudly + type narrowing, so useHabits() always returns a non-null Context.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">30</span>
+          <span class="mark">✓</span>
+          <p class="prompt">Every render of HabitProvider builds a brand-new object { habits, addHabit, toggleHabit, deleteHabit } as the context value. What is the consequence of that?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">The context is torn down and rebuilt from scratch</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">The provider unmounts its children</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">localStorage gets cleared</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">Every component that calls useHabits re-renders</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> A new value identity notifies every consumer — the usual reason people reach for useMemo here.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">31</span>
+          <span class="mark">✓</span>
+          <p class="prompt">What does type ButtonProps = { variant?: Variant } &amp; ComponentProps&lt;&quot;button&quot;&gt; accomplish?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">It replaces all the native button props with just variant</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">It adds an optional variant prop on top of every standard &lt;button&gt; prop, such as onClick, disabled and children</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It makes variant a required prop</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It converts the component into a plain div</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Intersection type: your own prop plus all the native button props.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">32</span>
+          <span class="mark">✗</span>
+          <p class="prompt">Given function Button({ variant = &quot;primary&quot;, className, ...props }: ButtonProps), what does props contain inside the function body?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt is-wrong"><span class="letter">A</span><span class="opt-text">Every prop, including variant and className</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">Only onClick</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">All the remaining props except variant and className, which were pulled out by the destructuring</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">An empty object</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Rest destructuring collects everything not explicitly named.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">33</span>
+          <span class="mark">✓</span>
+          <p class="prompt">In Header.tsx you have format(visibleDates.at(-1)!, &quot;MMM d&quot;). What does .at(-1) return, and what does the ! mean?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">The first element; ! is the logical NOT operator</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">The array's length; ! is required syntax after .at()</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">A shallow copy of the array; ! reverses it</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">The last element; ! is a non-null assertion telling TypeScript the value is not undefined</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> .at(-1) indexes from the end; ! is the non-null assertion.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">34</span>
+          <span class="mark">✓</span>
+          <p class="prompt">What job does twMerge from tailwind-merge do in Button.tsx?</p>
+        </div>
+        <pre class="snippet"><code>className={twMerge(
+  &quot;transition-colors rounded px-2 py-1 disabled:opacity-30 disabled:cursor-not-allowed&quot;,
+  getVariantStyles(variant),
+  className,
+)}</code></pre>
+        <ul class="opts">
+          <li class="opt is-correct"><span class="letter">A</span><span class="opt-text">It merges Tailwind class strings and resolves conflicts, so a className passed into Button wins over the defaults</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">It compiles Tailwind CSS at build time</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It minifies the class names for production</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It converts Tailwind utilities into plain CSS rules</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> twMerge resolves conflicting Tailwind utilities so the later/passed class wins.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">35</span>
+          <span class="mark">✓</span>
+          <p class="prompt">In startOfWeek(week, { weekStartsOn: 1 }), what does weekStartsOn: 1 mean?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">The week starts on Sunday</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">It shifts the week forward by one</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It selects the first week of the year</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">The week starts on Monday</span><span class="tag ok">his answer — correct</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> 0 = Sunday, 1 = Monday in date-fns.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">36</span>
+          <span class="mark">✗</span>
+          <p class="prompt">In Header.tsx the Next button has disabled={visibleDates.some(d =&gt; isToday(d))}. What is the practical effect?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Next is disabled at weekends</span></li>
+          <li class="opt is-wrong"><span class="letter">B</span><span class="opt-text">Next is disabled while there are no habits yet</span><span class="tag bad">his answer</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">Next is disabled whenever the week on screen contains today, so you cannot browse into future weeks</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">Next is permanently disabled</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Stops navigating past the current week.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">37</span>
+          <span class="mark">✗</span>
+          <p class="prompt">Trace getStreak. Today is Wednesday, and a habit's completions contains Wednesday and Tuesday but NOT Monday. What does it return?</p>
+        </div>
+        <pre class="snippet"><code>function getStreak(completions: Date[]) {
+  let streak = 0
+  let date = new Date()
+
+  while (completions.some(c =&gt; isSameDay(c, date))) {
+    streak++
+    date = subDays(date, 1)
+  }
+
+  return streak
+}</code></pre>
+        <ul class="opts">
+          <li class="opt is-wrong"><span class="letter">A</span><span class="opt-text">0</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">1</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">2</span><span class="tag ok">correct answer</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">3</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> Wed counts (1), Tue counts (2), Mon fails the check → 2.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">38</span>
+          <span class="mark">✓</span>
+          <p class="prompt">Same getStreak function. Today is Wednesday. This time completions contains Tuesday and Monday, but today has NOT been completed yet. What does it return?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">2</span></li>
+          <li class="opt"><span class="letter">B</span><span class="opt-text">1</span></li>
+          <li class="opt is-correct"><span class="letter">C</span><span class="opt-text">0</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">3</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> The while condition fails on the very first check, so it returns 0 — the streak resets before the day is done. A real quirk of this implementation.</p>
+      </article>
+      <article class="card right" data-correct="true">
+        <div class="card-head">
+          <span class="num">39</span>
+          <span class="mark">✓</span>
+          <p class="prompt">useLocalStorage passes a dateReviver to JSON.parse. What problem is that solving?</p>
+        </div>
+        <pre class="snippet"><code>function dateReviver(_key: string, value: unknown) {
+  if (typeof value === &quot;string&quot; &amp;&amp; /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    return parseISO(value)
+  }
+
+  return value
+}</code></pre>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">It compresses the stored JSON</span></li>
+          <li class="opt is-correct"><span class="letter">B</span><span class="opt-text">JSON has no Date type, so saved dates come back as plain strings — the reviver turns matching ISO strings back into real Date objects</span><span class="tag ok">his answer — correct</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">It encrypts whatever is written to localStorage</span></li>
+          <li class="opt"><span class="letter">D</span><span class="opt-text">It sorts the completions by date</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> JSON round-trips Dates into ISO strings; the reviver rebuilds them.</p>
+      </article>
+      <article class="card wrong" data-correct="false">
+        <div class="card-head">
+          <span class="num">40</span>
+          <span class="mark">✗</span>
+          <p class="prompt">What would actually break if you deleted dateReviver and just called JSON.parse(item)?</p>
+        </div>
+        <ul class="opts">
+          <li class="opt"><span class="letter">A</span><span class="opt-text">Nothing would change</span></li>
+          <li class="opt is-wrong"><span class="letter">B</span><span class="opt-text">localStorage would stop saving anything</span><span class="tag bad">his answer</span></li>
+          <li class="opt"><span class="letter">C</span><span class="opt-text">All saved habits would be deleted on refresh</span></li>
+          <li class="opt is-correct"><span class="letter">D</span><span class="opt-text">After a refresh, completions would hold strings instead of Dates, so the isSameDay comparisons — the day checkmarks and the streak — would stop working</span><span class="tag ok">correct answer</span></li>
+        </ul>
+        <p class="why"><strong>Why:</strong> date-fns comparisons on strings would break the checkmarks and streak after any refresh.</p>
+      </article>
+  </div>
+
+  <p class="foot">Generated by assessments/grade.mjs</p>
+</div>
+<script>
+  const buttons = document.querySelectorAll(".controls button")
+  const cards = document.querySelectorAll(".card")
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter
+      buttons.forEach(b => b.setAttribute("aria-pressed", String(b === btn)))
+      cards.forEach(card => {
+        const isCorrect = card.dataset.correct === "true"
+        const show =
+          filter === "all" ||
+          (filter === "wrong" && !isCorrect) ||
+          (filter === "right" && isCorrect)
+        card.style.display = show ? "" : "none"
+      })
+    })
+  })
+</script>
+</body>
+</html>
