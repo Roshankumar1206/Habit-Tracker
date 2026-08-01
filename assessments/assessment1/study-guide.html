@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="data:," />
+<title>Habit Tracker — Study Guide (all 40 questions explained)</title>
+<style>
+  :root {
+    --bg:#18181b; --panel:#27272a; --line:#3f3f46; --text:#fafafa;
+    --muted:#b4b4bb; --dim:#8b8b93; --accent:#a78bfa;
+    --good:#4ade80; --poor:#f87171; --amber:#fbbf24;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:17px; line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  code, pre { font-family:ui-monospace,SFMono-Regular,"Cascadia Mono",Consolas,monospace; font-variant-ligatures:none; }
+  .wrap { max-width:760px; margin:0 auto; padding:2.5rem 1.15rem 6rem; }
+
+  .eyebrow { color:var(--accent); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; }
+  h1 { font-size:2.1rem; margin:.4rem 0 .75rem; letter-spacing:-.02em; line-height:1.2; }
+  .lede { color:var(--muted); font-size:1.05rem; margin:0 0 2rem; }
+
+  .howto { background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--accent);
+    border-radius:.7rem; padding:1.2rem 1.4rem; margin-bottom:2rem; }
+  .howto h3 { margin:0 0 .6rem; font-size:1rem; }
+  .howto ul { margin:0; padding-left:1.2rem; color:var(--muted); font-size:.95rem; }
+  .howto li { margin:.35rem 0; }
+
+  .controls { display:flex; gap:.5rem; margin:0 0 2rem; flex-wrap:wrap;
+    position:sticky; top:0; background:var(--bg); padding:.9rem 0; z-index:5; border-bottom:1px solid var(--line); }
+  .controls button { background:var(--panel); color:var(--muted); border:1px solid var(--line);
+    border-radius:999px; padding:.45rem 1.1rem; font-size:.85rem; cursor:pointer; font-family:inherit; }
+  .controls button:hover { color:var(--text); }
+  .controls button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#1e1b3a; font-weight:600; }
+
+  h2 { font-size:1.35rem; margin:3rem 0 .5rem; letter-spacing:-.01em; }
+  .bigidea { background:rgba(167,139,250,.1); border:1px solid rgba(167,139,250,.3);
+    border-radius:.6rem; padding:.9rem 1.1rem; margin:0 0 1.5rem; font-size:.97rem; color:#ddd6fe; }
+  .bigidea strong { color:#f5f3ff; }
+
+  .item { border-top:1px solid var(--line); padding:1.75rem 0 .5rem; }
+  .item-head { display:flex; gap:.6rem; align-items:center; margin-bottom:.5rem; flex-wrap:wrap; }
+  .qnum { color:var(--dim); font-size:.8rem; font-variant-numeric:tabular-nums; letter-spacing:.05em; }
+  .badge { font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; font-weight:700;
+    padding:.18rem .55rem; border-radius:.3rem; }
+  .badge.got { background:rgba(74,222,128,.18); color:var(--good); }
+  .badge.missed { background:rgba(248,113,113,.18); color:var(--poor); }
+  .q { font-size:1.08rem; font-weight:600; margin:0 0 .85rem; line-height:1.45; }
+
+  .answer { background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--good);
+    border-radius:.5rem; padding:.7rem 1rem; margin:0 0 1rem; font-size:.97rem; }
+  .answer b { color:var(--good); }
+
+  .item p { margin:0 0 .9rem; color:var(--muted); }
+  .item p:last-child { margin-bottom:0; }
+  .item strong { color:var(--text); }
+  .item code { background:#131316; border:1px solid var(--line); border-radius:.25rem;
+    padding:.1rem .35rem; font-size:.86em; color:#e4e4e7; }
+
+  pre { background:#131316; border:1px solid var(--line); border-radius:.5rem;
+    padding:.85rem 1rem; margin:0 0 1rem; overflow-x:auto; font-size:.84rem; line-height:1.6; color:#d4d4d8; }
+  .item pre code, pre code { background:none; border:none; padding:0; font-size:1em; }
+
+  .callout { border-left:3px solid var(--amber); background:rgba(251,191,36,.08);
+    border-radius:.4rem; padding:.7rem 1rem; margin:0 0 1rem; font-size:.94rem; color:#fde68a; }
+  .callout strong { color:#fffbeb; }
+
+  .remember { border-left:3px solid var(--accent); background:rgba(167,139,250,.08);
+    border-radius:.4rem; padding:.7rem 1rem; margin:1rem 0 0; font-size:.94rem; color:#ddd6fe; }
+  .remember strong { color:#f5f3ff; }
+
+  .foot { color:var(--dim); font-size:.85rem; text-align:center; margin-top:4rem;
+    padding-top:1.5rem; border-top:1px solid var(--line); }
+
+  @media (max-width:560px) { body { font-size:16px; } .wrap { padding:1.75rem 1rem 4rem; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Habit Tracker · Study Guide</div>
+  <h1>All 40 questions, explained</h1>
+  <p class="lede">Every question from assessment 1, with the reason behind the answer.
+  Not just <em>what</em> is correct — <em>why</em> it is correct, and what it means in your own code.</p>
+
+  <div class="howto">
+    <h3>How to use this</h3>
+    <ul>
+      <li>Read <strong>all 40</strong>, even the ones you got right. Getting an answer right by luck is not the same as understanding it.</li>
+      <li>Each section starts with one <strong>big idea</strong>. If you only remember the big ideas, you will get most questions right.</li>
+      <li>Use the buttons below to show only the ones you missed, once you have read everything once.</li>
+      <li>The next test will use these same ideas with the <strong>options shuffled</strong>. Memorising "the answer is B" will not help. Understanding will.</li>
+    </ul>
+  </div>
+
+  <div class="controls">
+    <button data-filter="all" aria-pressed="true">All 40</button>
+    <button data-filter="missed" aria-pressed="false">Only the 17 I missed</button>
+    <button data-filter="got" aria-pressed="false">The 23 I got right</button>
+  </div>
+
+  <!-- ============ SECTION 1 ============ -->
+  <h2>1. Project setup &amp; tooling</h2>
+  <div class="bigidea"><strong>Big idea:</strong> your project is not one file that the browser runs.
+  Tools take your many <code>.tsx</code> files, check them, and turn them into plain JavaScript that a browser understands.
+  These questions are about which tool does which job.</div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q01</span><span class="badge got">You got this right</span></div>
+    <p class="q">Which command starts the local development server?</p>
+    <div class="answer"><b>npm run dev</b></div>
+    <p>Open <code>package.json</code> and look at <code>"scripts"</code>. Each name there is a shortcut for a longer command. When you type <code>npm run dev</code>, npm looks up <code>dev</code> and runs <code>vite</code>.</p>
+    <p>Vite starts a tiny web server on your own computer and watches your files. Save a file, and the page updates by itself without a full reload. That is called <strong>hot reload</strong>.</p>
+    <p>The other three: <code>build</code> makes the final files you would put on the internet. <code>preview</code> lets you look at what <code>build</code> produced. <code>lint</code> checks your code for style mistakes.</p>
+    <div class="remember"><strong>Remember:</strong> <code>dev</code> while you are working. <code>build</code> when you are finished.</div>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q02</span><span class="badge missed">You missed this</span></div>
+    <p class="q">In <code>"build": "tsc -b &amp;&amp; vite build"</code>, what does <code>tsc -b</code> do?</p>
+    <div class="answer"><b>It type-checks your TypeScript and stops the build if there is a type error.</b></div>
+    <p>This surprises most people: <strong>Vite does not check your types.</strong> To stay fast, Vite simply deletes all the type information and ships the JavaScript underneath. If you wrote <code>const x: number = "hello"</code>, Vite would not complain at all.</p>
+    <p>So <code>tsc</code> — the actual TypeScript compiler — is the thing that reads your types and finds mistakes. The <code>&amp;&amp;</code> in the middle means <em>"only run the second command if the first one succeeded"</em>. So if you have a type error, <code>tsc</code> fails and <code>vite build</code> never runs. You cannot ship broken types by accident.</p>
+    <div class="remember"><strong>Remember:</strong> Vite = fast, does not check. tsc = slower, does check.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q03</span><span class="badge got">You got this right</span></div>
+    <p class="q">Which line in <code>main.tsx</code> actually connects React to the page?</p>
+    <div class="answer"><b>createRoot(document.getElementById('root')!).render(...)</b></div>
+    <p>Your <code>index.html</code> is nearly empty. It has one line that matters: <code>&lt;div id="root"&gt;&lt;/div&gt;</code>. An empty box.</p>
+    <p>React needs to be told <em>where</em> to put your app. That one line does three things in order:</p>
+    <pre><code>document.getElementById('root')   // 1. find the empty box
+createRoot( ... )                 // 2. tell React "this box is yours"
+.render(&lt;App /&gt;)                  // 3. put the app inside it</code></pre>
+    <p>The <code>import</code> lines above it only bring code into the file. They do not make anything appear. This single line is the actual connection between React and the web page.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q04</span><span class="badge missed">You missed this</span></div>
+    <p class="q">Why is <code>&lt;App /&gt;</code> wrapped in <code>&lt;StrictMode&gt;</code>?</p>
+    <div class="answer"><b>In development it runs extra checks and deliberately runs some functions twice, to expose bugs.</b></div>
+    <p>StrictMode is a helper that <strong>only exists while you are developing</strong>. It disappears completely from the real build, so it has zero effect on your users.</p>
+    <p>What it does is deliberately run your components and effects <strong>twice</strong>. That sounds annoying, but it is on purpose: <em>well-written React code does not break when run twice.</em> If running twice causes a problem, that means you have a hidden bug.</p>
+    <p>Example: an effect that adds a click listener but never removes it. Run once, one listener. Run twice, two listeners, and every click fires twice. StrictMode makes that show up immediately instead of weeks later. (This connects directly to Q20.)</p>
+    <div class="callout"><strong>The wrong answer you picked</strong> was "required for TypeScript". StrictMode has nothing to do with TypeScript. TypeScript is checked by <code>tsc</code> — see Q02. Two completely separate things.</div>
+  </div>
+
+  <!-- ============ SECTION 2 ============ -->
+  <h2>2. Components, JSX &amp; lists</h2>
+  <div class="bigidea"><strong>Big idea:</strong> React keeps a copy of your screen in its memory.
+  When something changes, it compares the new version to the old version and only touches the parts that differ.
+  Almost every question here is about <em>how React does that comparison</em>. This was your weakest section — read it twice.</div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q05</span><span class="badge missed">You missed this</span></div>
+    <p class="q">Why does React need the <code>key</code> prop when you map over a list?</p>
+    <div class="answer"><b>It lets React match each item across renders, so it updates and reorders correctly.</b></div>
+    <p>Picture three habits on screen. You delete the middle one. React now has a new list of two. It has to work out: <em>which one disappeared?</em></p>
+    <p>It answers that using <code>key</code>. The key is a <strong>name tag</strong>. Same key means "this is the same habit as before, just keep its box and update it". A key it has never seen means "this is new, build a fresh box".</p>
+    <p>Think of name tags on students. You take a photo today and another tomorrow. The tags tell you who is who, even if they swapped seats.</p>
+    <div class="callout"><strong>The wrong answer you picked</strong> was "it sets the id attribute". It does not. <code>key</code> never appears in the finished HTML. Open devtools and look — there is no <code>key</code> on the element. It exists only inside React's own bookkeeping.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q06</span><span class="badge got">You got this right</span></div>
+    <p class="q">What goes wrong with <code>key={index}</code> instead of <code>key={habit.id}</code>?</p>
+    <div class="answer"><b>When you delete from the middle, the indices shift and React attaches the wrong box to the wrong habit.</b></div>
+    <p>The index is just the position: 0, 1, 2. It describes <em>where the item sits</em>, not <em>which item it is</em>.</p>
+    <p>Say you have Gym (0), Reading (1), Water (2). Delete Gym. Now Reading is 0 and Water is 1. React looks at key 0 and thinks "same item as before" — but the item at position 0 is a different habit now. So it reuses Gym's old box for Reading.</p>
+    <p><code>habit.id</code> is a random string created once when the habit is added. It belongs to that habit forever, no matter where it moves in the list.</p>
+    <div class="remember"><strong>Remember:</strong> the key must belong to the <em>item</em>, never to its <em>position</em>.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q07</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>{streak !== 0 &amp;&amp; &lt;span&gt;🔥 {streak}&lt;/span&gt;}</code> — what shows when streak is 0?</p>
+    <div class="answer"><b>Nothing at all.</b></div>
+    <p><code>&amp;&amp;</code> checks the left side first. If the left side is false, it stops and gives back false without ever looking at the right side.</p>
+    <p>When <code>streak</code> is 0, the comparison <code>streak !== 0</code> is <code>false</code>. And React renders nothing at all for <code>false</code>, <code>true</code>, <code>null</code> and <code>undefined</code>. So no fire emoji appears. Exactly what you want.</p>
+    <p>Now read Q08 straight away — it is the same line with one small piece removed, and the result is completely different.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q08</span><span class="badge missed">You missed this</span></div>
+    <p class="q">If it were written <code>{streak &amp;&amp; &lt;span&gt;🔥 {streak}&lt;/span&gt;}</code> instead, what shows when streak is 0?</p>
+    <div class="answer"><b>A bare <code>0</code> appears on the screen.</b></div>
+    <p>This is one of the most common bugs in all of React, so it is worth slowing down.</p>
+    <p><strong><code>&amp;&amp;</code> does not return <code>false</code>. It returns the left value itself.</strong> Try these in your head:</p>
+    <pre><code>0 && "hello"          // gives 0     ← not false!
+"" && "hello"         // gives ""
+false && "hello"      // gives false
+5 && "hello"          // gives "hello"</code></pre>
+    <p>So <code>streak &amp;&amp; ...</code> when streak is 0 gives you the number <code>0</code>. And React <em>does</em> render numbers. It only skips true, false, null and undefined. So a lonely <code>0</code> shows up on your page next to the habit name.</p>
+    <p>Writing <code>streak !== 0 &amp;&amp;</code> turns the 0 into a real <code>false</code> first, and React skips a real false. That is the whole reason the comparison is there.</p>
+    <div class="remember"><strong>Rule:</strong> never put a plain number on the left of <code>&amp;&amp;</code> in JSX. Compare it to something first — <code>list.length > 0 &amp;&amp;</code>, <code>count !== 0 &amp;&amp;</code>.</div>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q09</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>&lt;HabitProvider&gt;</code> wraps Header, HabitForm and HabitList. What makes those actually appear?</p>
+    <div class="answer"><b>HabitProvider renders its <code>children</code> prop.</b></div>
+    <p>Here is the part that trips people up: <strong>React does not automatically show whatever you nest inside a component.</strong></p>
+    <p>When you write this:</p>
+    <pre><code>&lt;HabitProvider&gt;
+  &lt;Header /&gt;
+  &lt;HabitForm /&gt;
+&lt;/HabitProvider&gt;</code></pre>
+    <p>React packs Header and HabitForm into a parcel and hands it to HabitProvider as a prop named <code>children</code>. HabitProvider then has to actually place that parcel somewhere:</p>
+    <pre><code>&lt;HabitContext value={...}&gt;
+  {children}          ← this line is what puts them on screen
+&lt;/HabitContext&gt;</code></pre>
+    <p>Delete <code>{children}</code> from your HabitProvider and your entire app goes blank. Nothing else changes, but nothing renders.</p>
+    <div class="remember"><strong>Think of it as:</strong> React delivers a parcel. The component still has to open it and put the contents on the shelf.</div>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q10</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>Button.tsx</code> never mentions <code>children</code>. So how does the text "Add Habit" appear inside the button?</p>
+    <div class="answer"><b><code>children</code> is just another prop, so it rides through the <code>{...props}</code> spread.</b></div>
+    <p>Look carefully at the function signature:</p>
+    <pre><code>function Button({ variant = "primary", className, ...props }) {
+  return &lt;button {...props} className={...} /&gt;
+}</code></pre>
+    <p><code>...props</code> means "collect every prop I did not name into one object". You named <code>variant</code> and <code>className</code>. Everything else — <code>onClick</code>, <code>disabled</code>, <code>type</code>, and <strong>children</strong> — lands in <code>props</code>.</p>
+    <p>Then <code>&lt;button {...props} /&gt;</code> pours that whole bundle onto the real HTML button. The children travel along inside the bundle without ever being named.</p>
+    <div class="remember"><strong>Key idea:</strong> <code>children</code> is not magic and not special. It is an ordinary prop that happens to be called "children". Anything true of props is true of children.</div>
+  </div>
+
+  <!-- ============ SECTION 3 ============ -->
+  <h2>3. State, events &amp; immutability</h2>
+  <div class="bigidea"><strong>Big idea:</strong> state is React's memory. There are two rules.
+  <strong>One:</strong> never change state directly — always hand React a brand-new copy.
+  <strong>Two:</strong> if the new value depends on the old value, use the function form.
+  This was your strongest section. Make sure you know <em>why</em>, not just <em>what</em>.</div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q11</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>const [weekOffset, setWeekOffset] = useState(0)</code> — what is the square-bracket part doing?</p>
+    <div class="answer"><b>Array destructuring — taking items out of an array by position.</b></div>
+    <p>This is plain JavaScript. Not React, and not TypeScript. It is worth being completely solid on, because you use it in every single component.</p>
+    <p><code>useState(0)</code> hands back an <strong>array with exactly two things in it</strong>: the current value, and a function to change it. Something like <code>[0, theSetterFunction]</code>.</p>
+    <p>Destructuring is a shortcut for pulling them out:</p>
+    <pre><code>// the long way
+const result = useState(0)
+const weekOffset = result[0]
+const setWeekOffset = result[1]
+
+// the short way — exactly the same thing
+const [weekOffset, setWeekOffset] = useState(0)</code></pre>
+    <p>Try it with a normal array to prove it to yourself: <code>const [first, second] = [10, 20]</code> gives you <code>first = 10</code> and <code>second = 20</code>.</p>
+    <p><strong>The names are yours to choose.</strong> Nothing forces "weekOffset". You could write <code>const [a, b] = useState(0)</code> and it would work. The names come from position, not from any label.</p>
+    <div class="remember"><strong>Square brackets <code>[]</code> = by position (arrays). Curly braces <code>{}</code> = by name (objects).</strong> <code>useState</code> returns an array, so you use square brackets.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q12</span><span class="badge got">You got this right</span></div>
+    <p class="q">Why <code>setWeekOffset(o =&gt; o + 1)</code> instead of <code>setWeekOffset(weekOffset + 1)</code>?</p>
+    <div class="answer"><b>The function form works from the latest value, so it stays correct when React batches updates.</b></div>
+    <p>Read the two out loud and hear the difference:</p>
+    <ul style="color:var(--muted)">
+      <li><code>setWeekOffset(weekOffset + 1)</code> — "set it to <em>this exact number I worked out just now</em>."</li>
+      <li><code>setWeekOffset(o =&gt; o + 1)</code> — "<em>whatever the value is when you get to it</em>, add one."</li>
+    </ul>
+    <p>React does not update state the instant you call the setter. It puts your update in a queue and deals with it in a moment. If two updates end up in the queue together, the first version calculates from a stale number and the second one overwrites it — so you click twice and only move one week.</p>
+    <p>The function form reads the freshest value at the moment it runs, so it can never go stale.</p>
+    <div class="remember"><strong>Rule:</strong> if the new value depends on the old value, use the function form.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q13</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>visibleDates</code> is recalculated on every render instead of being kept in its own <code>useState</code>. What is that called?</p>
+    <div class="answer"><b>Derived state — calculating a value from state you already have.</b></div>
+    <p>You keep <strong>one</strong> piece of state: <code>weekOffset</code>. Everything else is worked out from it, fresh, every time the component runs.</p>
+    <p>Why that is better: if you stored <code>visibleDates</code> in its own <code>useState</code>, you would have two things that must always agree. Change <code>weekOffset</code>, forget to update <code>visibleDates</code>, and now the header says one week while the buttons show another. Classic bug.</p>
+    <p>If it is calculated, it simply cannot fall out of sync. There is nothing to keep in sync.</p>
+    <div class="remember"><strong>Rule:</strong> if you can calculate it from something you already have, calculate it. Do not store it.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q14</span><span class="badge got">You got this right</span></div>
+    <p class="q">The input has both <code>value={name}</code> and <code>onChange</code>. What is that called?</p>
+    <div class="answer"><b>A controlled input — React state is the single source of truth.</b></div>
+    <p>The two halves form a loop:</p>
+    <pre><code>value={name}                        // the box displays whatever `name` is
+onChange={e =&gt; setName(e.target.value)}  // every keystroke updates `name`</code></pre>
+    <p>Type a letter → onChange fires → state updates → component re-renders → the box displays the new state. It happens in a fraction of a millisecond, so it feels like normal typing, but React is in charge the whole way round.</p>
+    <p>The text box is not storing anything itself. It is just a window showing you the state. Read Q15 next — it is what happens when you break this loop.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q15</span><span class="badge missed">You missed this</span></div>
+    <p class="q">If you removed <code>value={name}</code> but kept <code>onChange</code>, what happens when <code>setName("")</code> runs after submit?</p>
+    <div class="answer"><b>The typed text stays in the box.</b></div>
+    <p>Only one of two things can be holding the text: <strong>React</strong>, or <strong>the browser's own input element</strong>.</p>
+    <p><em>With</em> <code>value={name}</code>: React holds it. You set <code>name</code> to <code>""</code>, the component re-renders, and the box is told to display an empty string. It clears.</p>
+    <p><em>Without</em> <code>value={name}</code>: the browser holds it, the way a plain HTML page works. Your <code>name</code> variable still changes to <code>""</code>, but nothing ever tells the box about it. So your old text just sits there while your state says empty. The two have drifted apart.</p>
+    <div class="remember"><strong>Controlled</strong> = React holds the value (has <code>value=</code>). <strong>Uncontrolled</strong> = the browser holds it. Pick one and stick to it — mixing them is where the confusion comes from.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q16</span><span class="badge got">You got this right</span></div>
+    <p class="q">What does <code>e.preventDefault()</code> do in <code>handleSubmit</code>?</p>
+    <div class="answer"><b>It stops the browser's built-in form submit, which would reload the page.</b></div>
+    <p>HTML forms are much older than React. Their built-in behaviour is: gather the fields, send them to a server, and <strong>reload the page</strong>. That made sense in 1998.</p>
+    <p>In your app a reload would be a disaster — the whole React app restarts and you lose everything in memory. <code>e.preventDefault()</code> says "do not do the old-fashioned thing, I will handle this in JavaScript myself".</p>
+    <div class="callout"><strong>Careful:</strong> this does <em>not</em> stop the event travelling up to parent elements. That is a different method called <code>e.stopPropagation()</code>. Two different jobs that people mix up constantly.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q17</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>deleteHabit</code> uses <code>filter</code>. Why not find the index and use <code>splice</code>?</p>
+    <div class="answer"><b><code>filter</code> returns a new array. <code>splice</code> edits the existing one, and React can miss the change.</b></div>
+    <p>This is the single most important rule in React state, so here it is in full.</p>
+    <p>React does not scan through your array looking for differences — that would be slow. It asks one cheap question: <em>"is this the exact same array object as last time?"</em></p>
+    <pre><code>curr.splice(2, 1)   // same array, just shorter  → React: "no change" → no re-render
+curr.filter(...)    // a brand-new array          → React: "changed!"  → re-renders</code></pre>
+    <p>With <code>splice</code> your data really has changed, but the screen does not update, and you spend an hour hunting a bug that is not in your logic at all.</p>
+    <div class="remember"><strong>Rule:</strong> to change state, hand React a <em>brand-new thing</em>. Never edit the old one.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q18</span><span class="badge got">You got this right</span></div>
+    <p class="q">In <code>toggleHabit</code>, why <code>return { ...h, completions }</code> instead of <code>h.completions = completions</code>?</p>
+    <div class="answer"><b>It creates a new habit object rather than editing the old one.</b></div>
+    <p>Exactly the same rule as Q17, one level deeper. Q17 was about the array. This is about the object inside the array.</p>
+    <p><code>{ ...h, completions }</code> means: "make a new object, copy every field from <code>h</code> into it, then overwrite the <code>completions</code> field with the new list." The original <code>h</code> is left completely untouched.</p>
+    <p>Notice the code does both levels at once: <code>curr.map(...)</code> builds a new array, and <code>{...h}</code> builds a new object for the one habit that changed. Habits that did not change are returned as-is with <code>return h</code> — no need to copy something that did not change.</p>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q19</span><span class="badge got">You got this right</span></div>
+    <p class="q">Why <code>crypto.randomUUID()</code> for the id instead of <code>habits.length</code>?</p>
+    <div class="answer"><b>After a delete, lengths repeat — so two habits could end up with the same id.</b></div>
+    <p>Walk through it:</p>
+    <pre><code>add Gym      → length is 0 → id 0
+add Reading  → length is 1 → id 1
+add Water    → length is 2 → id 2
+delete Gym   → 2 habits left
+add Yoga     → length is 2 → id 2   ← Water already has id 2!</code></pre>
+    <p>Now <code>deleteHabit(2)</code> deletes both Water and Yoga, because <code>filter(h =&gt; h.id !== 2)</code> removes everything matching. And React sees two identical keys and warns you.</p>
+    <p><code>crypto.randomUUID()</code> generates a long random string like <code>"f47ac10b-58cc-4372-a567-0e02b2c3d479"</code>. It is built into the browser, and in practice it will never repeat.</p>
+    <div class="remember"><strong>An id must be unique and must never change</strong> for the life of that item.</div>
+  </div>
+
+  <!-- ============ SECTION 4 ============ -->
+  <h2>4. Effects &amp; custom hooks</h2>
+  <div class="bigidea"><strong>Big idea:</strong> <code>useEffect</code> is for reaching <em>outside</em> React —
+  event listeners, localStorage, timers, network calls. Three parts to understand:
+  <strong>the body</strong> (what to do), <strong>the dependency array</strong> (when to do it),
+  and <strong>the returned function</strong> (how to undo it).</div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q20</span><span class="badge missed">You missed this</span></div>
+    <p class="q">What is the function returned from the <code>useEffect</code> in App.tsx for?</p>
+    <div class="answer"><b>It is the cleanup function — React runs it before the effect runs again, and when the component leaves the screen.</b></div>
+    <p>Your effect adds a click listener to the document. Now imagine it runs again without removing the old one. You would have two listeners. Then three. Then four. Every click fires all of them, and your app slowly gets slower. That is a <strong>memory leak</strong>.</p>
+    <p>So you hand React an undo button:</p>
+    <pre><code>useEffect(() =&gt; {
+  document.addEventListener("click", handler)      // set up
+
+  return () =&gt; {
+    document.removeEventListener("click", handler) // undo
+  }
+}, [weekOffset])</code></pre>
+    <p>React holds onto that returned function and runs it at exactly the right moments: just before running the effect again, and when the component is removed.</p>
+    <div class="remember"><strong>Pattern:</strong> if the effect <em>starts</em> something, the cleanup <em>stops</em> it. Added a listener → remove it. Started a timer → clear it. Opened a connection → close it.</div>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q21</span><span class="badge missed">You missed this</span></div>
+    <p class="q">The dependency array is <code>[weekOffset]</code>. What happens each time weekOffset changes?</p>
+    <div class="answer"><b>Cleanup runs first to remove the old listener, then the effect body runs again and adds a fresh one.</b></div>
+    <p>The dependency array is React asking one question after every render: <em>"did anything in this list change?"</em></p>
+    <p>If nothing changed, React does nothing at all. If something changed, React does two steps <strong>in this order</strong>:</p>
+    <pre><code>1. run the cleanup from last time   (remove the OLD listener)
+2. run the effect body again        (add a NEW listener)</code></pre>
+    <p>The order is the whole point. The new listener is a brand-new function that knows the new <code>weekOffset</code>. The old one, which knew the old value, has already been thrown away. That is how the effect stays up to date — and it is exactly what goes wrong in Q22 when you remove the dependency.</p>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q22</span><span class="badge got">You got this right</span></div>
+    <p class="q">If the dependency array were <code>[]</code>, what would <code>console.log(weekOffset)</code> print after several Next clicks?</p>
+    <div class="answer"><b>Always 0 — the handler captured the value from the first render and was never replaced.</b></div>
+    <p><code>[]</code> means "run once, when the component first appears, and never again". So the effect runs a single time, creates one <code>handler</code> function, and that function is the only one that will ever exist.</p>
+    <p>When that function was created, <code>weekOffset</code> was 0. The function <strong>remembers the variables from the moment it was born</strong>. Clicking Next changes the state and re-renders the component, but nobody ever replaces that listener. It is frozen in the past, still holding 0.</p>
+    <p>This has a name: a <strong>stale closure</strong>. It is one of the most common React bugs, and it is exactly what the dependency array exists to prevent.</p>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q23</span><span class="badge got">You got this right</span></div>
+    <p class="q">With no dependency array at all, how often does the effect run?</p>
+    <div class="answer"><b>After every single render.</b></div>
+    <p>The three cases, worth memorising as a set:</p>
+    <pre><code>useEffect(() =&gt; {...})              // no array   → after EVERY render
+useEffect(() =&gt; {...}, [])          // empty      → ONCE, on mount
+useEffect(() =&gt; {...}, [a, b])      // with items → when a or b changes</code></pre>
+    <p>The "no array" version is rarely what you want, and it is an easy way to create an infinite loop: the effect sets state → that causes a render → which runs the effect → which sets state, forever.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q24</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>useLocalStorage</code> uses <code>useState&lt;T&gt;(() =&gt; {...})</code> — a function, not a value. Why?</p>
+    <div class="answer"><b>It is a lazy initializer. The function only runs on the first render, instead of on every render.</b></div>
+    <p>Compare the two carefully, because the difference is easy to miss:</p>
+    <pre><code>useState( readFromStorage() )      // ← JavaScript CALLS the function first,
+                                   //   then passes the result. Every render.
+
+useState( () =&gt; readFromStorage() ) // ← you pass the function itself, unopened.
+                                   //   React calls it only on render #1.</code></pre>
+    <p>In the first version, JavaScript has to work out the argument <em>before</em> it can call <code>useState</code>. So it reads localStorage and runs <code>JSON.parse</code> on <strong>every single render</strong> — dozens of times a minute — and React throws the result away every time after the first, because state already has a value.</p>
+    <p>In the second version you hand React the sealed envelope. React opens it once and never again.</p>
+    <p>Reading localStorage and parsing JSON is slow compared to normal JavaScript, so this matters.</p>
+    <div class="remember"><strong>Rule:</strong> if working out the initial state takes real effort, wrap it in <code>() =&gt;</code>.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q25</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>return [storedValue, setStoredValue] as const</code> — what does <code>as const</code> do?</p>
+    <div class="answer"><b>It types the return as a fixed 2-slot tuple instead of a mixed array, so destructuring gets the right types.</b></div>
+    <p>Without <code>as const</code>, TypeScript looks at <code>[storedValue, setStoredValue]</code> and thinks: "an array containing either a value or a setter function, of any length."</p>
+    <p>So when you write <code>const [habits, setHabits] = useLocalStorage(...)</code>, TypeScript is not sure whether <code>habits</code> is your data or a function. You lose autocomplete and it stops catching mistakes.</p>
+    <p><code>as const</code> tells it: "this is exactly two slots. Slot 0 is the value. Slot 1 is the setter." Now destructuring gives each variable its correct type. It is purely a TypeScript instruction — it changes nothing at runtime.</p>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q26</span><span class="badge got">You got this right</span></div>
+    <p class="q">The effect in useLocalStorage has <code>[storedValue, key]</code>. When does it write?</p>
+    <div class="answer"><b>After any render where <code>storedValue</code> or <code>key</code> changed.</b></div>
+    <p>Two things to hold together. First, <strong>effects always run after the screen has updated</strong>, never before. Second, they only run when a listed dependency actually changed.</p>
+    <p>So the order for adding a habit is: you call <code>setHabits</code> → state updates → the screen re-renders with the new habit → <em>then</em> the effect notices <code>storedValue</code> changed and saves to localStorage.</p>
+    <p>This is why the app feels instant. The save happens after you already see the result.</p>
+  </div>
+
+  <!-- ============ SECTION 5 ============ -->
+  <h2>5. The Context API</h2>
+  <div class="bigidea"><strong>Big idea:</strong> Context is a shared box.
+  A provider puts things in at the top. Any component underneath can reach in and take what it needs,
+  without every component in between having to pass it along.</div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q27</span><span class="badge missed">You missed this</span></div>
+    <p class="q">Why use Context for habits instead of passing them as props?</p>
+    <div class="answer"><b>To avoid prop drilling.</b></div>
+    <p>Imagine there were no Context. <code>App</code> holds the habits. Now:</p>
+    <pre><code>App  →  Header      (needs habits)
+App  →  HabitForm   (needs addHabit)
+App  →  HabitList   (needs habits)
+          └→ HabitItem  (needs deleteHabit and toggleHabit)</code></pre>
+    <p><code>HabitList</code> does not use <code>deleteHabit</code> itself, but it would still have to accept it as a prop and pass it down to <code>HabitItem</code>. It becomes a delivery driver for data it does not care about. That is <strong>prop drilling</strong> — tedious to write, and every new prop means editing several files.</p>
+    <p>With Context, <code>HabitProvider</code> puts everything in the shared box once. Any component below just calls <code>useHabits()</code> and takes what it needs. Nothing in the middle has to know.</p>
+    <div class="callout"><strong>Common misunderstanding:</strong> Context is <em>not</em> faster than props, and it is not a database. It is purely about tidiness. For a prop that goes down one level, plain props are still the better choice.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q28</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>createContext&lt;null | Context&gt;(null)</code> — why is null in the type and the default?</p>
+    <div class="answer"><b>A component rendered outside the provider would receive that default, so the type has to allow it.</b></div>
+    <p>The value you pass to <code>createContext</code> is the <strong>fallback</strong>. It is used when a component calls <code>useContext</code> without any provider above it.</p>
+    <p>That really can happen — by mistake, or in a test that renders one component on its own. There is no sensible default list of habits to invent, so the code uses <code>null</code> to mean "no provider found".</p>
+    <p>And because <code>null</code> is genuinely possible, TypeScript makes you say so in the type: <code>null | Context</code>. It refuses to let you pretend the case does not exist. Q29 is how the code then deals with it.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q29</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>if (habitContext == null) throw new Error("Null context")</code> — what does this achieve?</p>
+    <div class="answer"><b>A clear error if used outside the provider, <em>and</em> it narrows the type so callers never handle null.</b></div>
+    <p>One small line doing two useful jobs.</p>
+    <p><strong>Job 1 — for you, the human.</strong> Without it, using <code>useHabits()</code> outside the provider gives you <code>null</code>, and then somewhere far away you get "Cannot read properties of null (reading 'habits')". With it, you get "Null context" immediately, pointing at the real problem.</p>
+    <p><strong>Job 2 — for TypeScript.</strong> This one is cleverer. <code>throw</code> ends the function. So any code <em>after</em> that line can only be running if the value was <strong>not</strong> null. TypeScript understands this and narrows the type from <code>null | Context</code> down to just <code>Context</code>.</p>
+    <p>That is why every component can write <code>const { habits } = useHabits()</code> with no null check at all. One <code>if</code> in one place removes the need for a check in every component.</p>
+    <div class="remember">This pattern is called a <strong>type guard</strong>. Check once at the boundary, and everything past it is safe.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q30</span><span class="badge got">You got this right</span></div>
+    <p class="q">A new <code>{ habits, addHabit, ... }</code> object is built on every render. What is the consequence?</p>
+    <div class="answer"><b>Every component that calls <code>useHabits()</code> re-renders.</b></div>
+    <p>React decides whether context consumers need updating by asking: <em>"is this the exact same object as before?"</em> — not "do the contents look similar?"</p>
+    <p>Since <code>value={{ habits, addHabit, toggleHabit, deleteHabit }}</code> creates a fresh object literal on every render, the answer is always "no, different object". So everyone re-renders, every time.</p>
+    <p>For an app this small that is completely fine — re-rendering a few components is cheap. In a large app, people wrap the value in <code>useMemo</code> so the same object is reused when nothing meaningful has changed. Worth knowing it exists; do not add it here.</p>
+  </div>
+
+  <!-- ============ SECTION 6 ============ -->
+  <h2>6. TypeScript &amp; the Button component</h2>
+  <div class="bigidea"><strong>Big idea:</strong> types describe the <em>shape</em> of your data,
+  so your editor can catch mistakes before you ever run the code. They vanish completely when the app runs —
+  the browser never sees them.</div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q31</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>type ButtonProps = { variant?: Variant } &amp; ComponentProps&lt;"button"&gt;</code> — what does this do?</p>
+    <div class="answer"><b>Adds an optional <code>variant</code> prop on top of every standard button prop.</b></div>
+    <p>Three pieces:</p>
+    <ul style="color:var(--muted)">
+      <li><code>{ variant?: Variant }</code> — your own custom prop. The <code>?</code> means optional, which is why the default <code>"primary"</code> works.</li>
+      <li><code>ComponentProps&lt;"button"&gt;</code> — React handing you the complete list of props a real HTML <code>&lt;button&gt;</code> accepts: onClick, disabled, type, children, and everything else.</li>
+      <li><code>&amp;</code> — "and". Join both sets together.</li>
+    </ul>
+    <p>The payoff: your Button works exactly like a normal button everywhere, with autocomplete for all the standard props, <em>plus</em> your variant. You never have to list <code>onClick</code>, <code>disabled</code> and the rest by hand.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q32</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>function Button({ variant = "primary", className, ...props })</code> — what is inside <code>props</code>?</p>
+    <div class="answer"><b>Everything <em>except</em> <code>variant</code> and <code>className</code>.</b></div>
+    <p><code>...props</code> is called the <strong>rest</strong> pattern. It means "sweep up everything I have not already named into one object". Since you named <code>variant</code> and <code>className</code>, those two are taken out and are <strong>not</strong> in <code>props</code>.</p>
+    <pre><code>&lt;Button variant="secondary" className="p-4" onClick={fn} disabled&gt;Hi&lt;/Button&gt;
+
+variant  = "secondary"
+className = "p-4"
+props    = { onClick: fn, disabled: true, children: "Hi" }</code></pre>
+    <p><strong>And that separation is deliberate.</strong> If <code>variant</code> stayed in <code>props</code>, the spread <code>&lt;button {...props} /&gt;</code> would put a meaningless <code>variant="secondary"</code> attribute into your HTML. And if <code>className</code> stayed in, it would collide with the merged className instead of being combined by twMerge (Q34).</p>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q33</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>visibleDates.at(-1)!</code> — what does <code>.at(-1)</code> return, and what is the <code>!</code>?</p>
+    <div class="answer"><b>The last element; <code>!</code> is a non-null assertion.</b></div>
+    <p><code>.at()</code> accepts negative numbers, counting backwards from the end. <code>.at(-1)</code> is the last item, <code>.at(-2)</code> the second-to-last. It is much nicer than <code>arr[arr.length - 1]</code>.</p>
+    <p>The <code>!</code> is you talking to TypeScript. TypeScript worries the array might be empty, in which case <code>.at(-1)</code> would be <code>undefined</code>, and <code>format(undefined)</code> would crash. The <code>!</code> says <em>"trust me, it is definitely there"</em>.</p>
+    <div class="callout"><strong>Use it sparingly.</strong> You are switching off a safety check. Here it is fine, because <code>visibleDates</code> always holds exactly seven days. But if you are ever wrong, you get a crash with no warning.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q34</span><span class="badge got">You got this right</span></div>
+    <p class="q">What does <code>twMerge</code> do in Button.tsx?</p>
+    <div class="answer"><b>It merges Tailwind classes and resolves conflicts, so a className you pass in beats the default.</b></div>
+    <p>Tailwind classes can contradict each other. <code>px-2</code> and <code>px-4</code> both set horizontal padding — they cannot both apply.</p>
+    <p>If you just glued the strings together you would get <code>"px-2 px-4"</code>, and CSS would pick a winner by its own rules, <em>not</em> by the order you wrote them. So passing <code>className="px-4"</code> into Button might silently do nothing.</p>
+    <p><code>twMerge</code> actually understands Tailwind. It spots that <code>px-2</code> and <code>px-4</code> are the same kind of thing, throws away the earlier one, and keeps the last. Since <code>className</code> is passed last in the call, whatever you pass in always wins.</p>
+    <p>That is what makes Button reusable: sensible defaults you can always override.</p>
+  </div>
+
+  <!-- ============ SECTION 7 ============ -->
+  <h2>7. App logic &amp; date-fns</h2>
+  <div class="bigidea"><strong>Big idea:</strong> dates are far harder than they look —
+  time zones, month lengths, leap years. <code>date-fns</code> gives you many small functions
+  that each do one date job properly, so you never write that logic yourself.</div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q35</span><span class="badge got">You got this right</span></div>
+    <p class="q"><code>startOfWeek(week, { weekStartsOn: 1 })</code> — what does <code>weekStartsOn: 1</code> mean?</p>
+    <div class="answer"><b>The week starts on Monday.</b></div>
+    <p>The numbers run <code>0 = Sunday, 1 = Monday, 2 = Tuesday</code> … up to <code>6 = Saturday</code>.</p>
+    <p>It matters because countries disagree. The US treats Sunday as the first day; most of Europe and India use Monday. Without saying which you want, your app would show a different layout to different users.</p>
+    <p>Passing <code>1</code> pins it down, so the row of day buttons always reads Mon → Sun for everyone.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q36</span><span class="badge missed">You missed this</span></div>
+    <p class="q"><code>disabled={visibleDates.some(d =&gt; isToday(d))}</code> on the Next button — what is the effect?</p>
+    <div class="answer"><b>Next is disabled whenever the week on screen contains today, so you cannot browse into the future.</b></div>
+    <p>Read it as an English sentence: <code>.some()</code> asks <em>"is this true for at least one item?"</em> So the whole line means <em>"is any day currently on screen today?"</em></p>
+    <p>If yes, you are looking at the current week. Pressing Next would take you to a week that has not happened yet — where there is nothing to track and every button would be disabled anyway (Q36's sibling: <code>disabled={isFuture(date)}</code> on the day buttons). So the button switches itself off.</p>
+    <p>Prev has no such check, because looking back at your history is always useful.</p>
+    <div class="remember"><code>.some()</code> = "is it true for at least one?" · <code>.every()</code> = "is it true for all of them?"</div>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q37</span><span class="badge missed">You missed this</span></div>
+    <p class="q">Today is Wednesday. <code>completions</code> has Wednesday and Tuesday, but not Monday. What does <code>getStreak</code> return?</p>
+    <div class="answer"><b>2</b></div>
+    <p>The way to answer a question like this is to <strong>walk through the loop line by line</strong> and write down the values. Do not try to do it in your head.</p>
+    <pre><code>function getStreak(completions) {
+  let streak = 0
+  let date = new Date()          // Wednesday
+
+  while (completions.some(c =&gt; isSameDay(c, date))) {
+    streak++
+    date = subDays(date, 1)      // step one day back
+  }
+  return streak
+}</code></pre>
+    <p>Now trace it:</p>
+    <pre><code>start:  streak = 0,  date = Wednesday
+
+check Wednesday → in the list? YES → streak = 1 → date = Tuesday
+check Tuesday   → in the list? YES → streak = 2 → date = Monday
+check Monday    → in the list? NO  → the loop stops
+
+return 2</code></pre>
+    <p>The function walks backwards from today and stops the moment it finds a day you missed. That is what a streak is: how many days in a row, counting back from now.</p>
+    <div class="remember"><strong>Skill to practise:</strong> when a question asks "what does this return", write out each pass of the loop on paper. It is slower, but it is always right.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q38</span><span class="badge got">You got this right</span></div>
+    <p class="q">Same function. Today is Wednesday, completions has Tuesday and Monday, but today is not done. What does it return?</p>
+    <div class="answer"><b>0</b></div>
+    <p>The check happens <em>before</em> anything is counted. <code>date</code> starts as today. Today is not in the list, so the <code>while</code> condition is false straight away, the loop body never runs even once, and <code>streak</code> is still 0.</p>
+    <div class="callout"><strong>This is arguably a flaw in the app.</strong> At 9am, before you have ticked today, a 30-day streak displays as 0 — and then jumps back to 31 when you tick it. A kinder version would start from yesterday when today is not done yet. Worth thinking about how you would fix it.</div>
+  </div>
+
+  <div class="item" data-result="got">
+    <div class="item-head"><span class="qnum">Q39</span><span class="badge got">You got this right</span></div>
+    <p class="q">Why does <code>useLocalStorage</code> pass a <code>dateReviver</code> to <code>JSON.parse</code>?</p>
+    <div class="answer"><b>JSON has no Date type, so saved dates come back as strings. The reviver turns them back into real Dates.</b></div>
+    <p>JSON can only hold five kinds of thing: text, numbers, true/false, lists and objects. <strong>There is no Date.</strong></p>
+    <p>So when you save, your Date quietly becomes text:</p>
+    <pre><code>JSON.stringify(new Date())
+// "2026-08-01T09:30:00.000Z"   ← this is now just a string</code></pre>
+    <p>Load it back with a plain <code>JSON.parse</code> and it is still a string. It <em>looks</em> like a date to you, but it has no <code>.getTime()</code>, and date-fns cannot work with it.</p>
+    <p>A reviver is a function that <code>JSON.parse</code> calls for every single value as it rebuilds the data. This one asks "does this text look like a date?" — that is what the regular expression checks — and if so, converts it back with <code>parseISO</code>.</p>
+  </div>
+
+  <div class="item" data-result="missed">
+    <div class="item-head"><span class="qnum">Q40</span><span class="badge missed">You missed this</span></div>
+    <p class="q">What would break if you deleted <code>dateReviver</code> and just called <code>JSON.parse(item)</code>?</p>
+    <div class="answer"><b>After a refresh, <code>completions</code> would hold strings, so <code>isSameDay</code> would stop working — the day ticks and the streak would break.</b></div>
+    <p>The sneaky part is <strong>when</strong> it breaks.</p>
+    <p><em>Before</em> you refresh, everything works perfectly. You added those dates in this session, so they are still real Date objects sitting in memory. You could test for an hour and never see a problem.</p>
+    <p><em>After</em> you refresh, the app reloads from localStorage and now <code>completions</code> is full of strings. Then <code>isSameDay("2026-08-01T...", someDate)</code> cannot compare them properly. So:</p>
+    <ul style="color:var(--muted)">
+      <li>the day buttons lose their purple fill — your ticks look erased</li>
+      <li>the streak shows 0</li>
+      <li>"2 / 5 done today" in the header goes wrong</li>
+    </ul>
+    <p>All of it looks like your data was lost. It was not — it is right there in localStorage, in the wrong format.</p>
+    <div class="remember"><strong>The lesson:</strong> "works until you refresh" almost always means something went through JSON and did not come back the same shape.</div>
+  </div>
+
+  <p class="foot">Habit Tracker · Study guide for assessment 1 · Read it all, then we test again with the options shuffled.</p>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll(".controls button")
+  const items = document.querySelectorAll(".item")
+
+  /* Group each section heading with the items that belong to it, so a heading
+     can be hidden when the filter leaves nothing underneath it. */
+  const groups = []
+  document.querySelectorAll("h2").forEach(heading => {
+    const group = { heading, intro: null, items: [] }
+    let node = heading.nextElementSibling
+    while (node && node.tagName !== "H2") {
+      if (node.classList.contains("bigidea")) group.intro = node
+      if (node.classList.contains("item")) group.items.push(node)
+      node = node.nextElementSibling
+    }
+    groups.push(group)
+  })
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter
+      buttons.forEach(b => b.setAttribute("aria-pressed", String(b === btn)))
+
+      items.forEach(item => {
+        const show = filter === "all" || item.dataset.result === filter
+        item.style.display = show ? "" : "none"
+      })
+
+      groups.forEach(group => {
+        const anyVisible = group.items.some(i => i.style.display !== "none")
+        group.heading.style.display = anyVisible ? "" : "none"
+        // the big idea is only worth reading in full-guide mode
+        if (group.intro) group.intro.style.display = filter === "all" ? "" : "none"
+      })
+    })
+  })
+</script>
+</body>
+</html>
